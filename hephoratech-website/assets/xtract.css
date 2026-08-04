@@ -304,7 +304,9 @@ h2{font-size:clamp(1.75rem,3.4vw,2.6rem)}
 .ss-item:hover .ss-name{color:var(--pur-3)}
 .ss-sub{color:var(--muted);font-size:.88rem;line-height:1.58;max-height:0;opacity:0;overflow:hidden;
   transition:max-height .55s var(--ease),opacity .5s var(--ease),margin .55s var(--ease)}
-.ss-item.active .ss-sub{max-height:140px;opacity:1;margin-top:10px}
+.ss-sub p{margin-bottom:10px}
+.ss-sub p:last-child{margin-bottom:0}
+.ss-item.active .ss-sub{max-height:400px;opacity:1;margin-top:10px}
 .ss-stage{position:relative}
 .ss-panel{min-height:auto;display:flex;align-items:flex-start;padding:0 0 30px}
 /* two-item showcases: tighter, with clear separation */
@@ -313,7 +315,7 @@ h2{font-size:clamp(1.75rem,3.4vw,2.6rem)}
 .svc-sticky.compact .ss-item{padding:18px 0;opacity:.72}
 .svc-sticky.compact .ss-item:first-child{padding-top:0}
 .svc-sticky.compact .ss-item.active{opacity:1}
-.svc-sticky.compact .ss-sub{max-height:140px;opacity:1;margin-top:10px}
+.svc-sticky.compact .ss-sub{max-height:400px;opacity:1;margin-top:10px}
 .svc-sticky.compact .ss-nav{top:132px}
 .ss-card{
   position:relative;width:100%;overflow:hidden;display:block;
