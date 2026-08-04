@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://hephoratech.com/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://hephoratech.com/services</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://hephoratech.com/service-web-development</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://hephoratech.com/service-ecommerce</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://hephoratech.com/service-seo</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://hephoratech.com/service-automation-ai</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://hephoratech.com/service-social-media</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://hephoratech.com/service-saas</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://hephoratech.com/products</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://hephoratech.com/product-school-manager</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://hephoratech.com/product-food-delivery</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://hephoratech.com/about</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://hephoratech.com/contact</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+</urlset>
