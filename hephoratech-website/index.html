@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HephoraTech — Engineered for What's Next</title>
+<meta name="description" content="HephoraTech builds websites, e-commerce stores, mobile apps, custom software, and SaaS products. Based in Tiruppur, Tamil Nadu.">
+<link rel="icon" href="assets/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/xtract.css">
+</head>
+<body>
+<div class="progress" id="prog"></div>
+<div class="stars" id="stars"></div>
+<div class="bg-grid"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<nav id="nav">
+  <div class="nav-in">
+    <a href="index.html" class="nav-logo"><img src="assets/logo-transparent.png" alt="HephoraTech"></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li class="has-drop"><a href="services.html">Services</a>
+        <ul class="drop">
+          <li><a href="service-web-development.html"><span class="di"><svg viewBox="0 0 24 24"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg></span>Web &amp; App Development</a></li>
+          <li><a href="service-ecommerce.html"><span class="di"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 002 1.6h9.7a2 2 0 002-1.6L23 6H6"/></svg></span>E-Commerce</a></li>
+          <li><a href="service-seo.html"><span class="di"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></span>SEO &amp; Optimization</a></li>
+          <li><a href="service-automation-ai.html"><span class="di"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>Automation &amp; AI</a></li>
+          <li><a href="service-social-media.html"><span class="di"><svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg></span>Social Media &amp; Ads</a></li>
+          <li><a href="service-saas.html"><span class="di"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></span>SaaS Product Builds</a></li>
+        </ul>
+      </li>
+      <li class="has-drop"><a href="products.html">Products</a>
+        <ul class="drop">
+          <li><a href="product-food-delivery.html"><span class="di"><svg viewBox="0 0 24 24"><path d="M3 11h18M5 11V8a7 7 0 0114 0v3"/><path d="M4 15h16a2 2 0 01-2 2H6a2 2 0 01-2-2z"/><path d="M12 4V2"/></svg></span>Custom Food Delivery App</a></li>
+          <li><a href="product-school-manager.html"><span class="di"><svg viewBox="0 0 24 24"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5"/></svg></span>School Manager</a></li>
+        </ul>
+      </li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <span class="nav-cta"><a href="contact.html" class="btn btn-primary btn-sm mag"><span>Start a Project</span><span class="btn-ico"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></span>
+    <button class="menu-toggle" aria-label="Menu">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html">Home</a>
+  <a href="services.html">Services</a>
+  <a href="service-web-development.html" class="sub">Web &amp; App Development</a>
+  <a href="service-ecommerce.html" class="sub">E-Commerce</a>
+  <a href="service-seo.html" class="sub">SEO &amp; Optimization</a>
+  <a href="service-automation-ai.html" class="sub">Automation &amp; AI</a>
+  <a href="service-social-media.html" class="sub">Social Media &amp; Ads</a>
+  <a href="service-saas.html" class="sub">SaaS Product Builds</a>
+  <a href="products.html">Products</a>
+  <a href="product-food-delivery.html" class="sub">Custom Food Delivery App</a>
+  <a href="product-school-manager.html" class="sub">School Manager</a>
+  <a href="about.html">About</a>
+  <a href="contact.html">Contact</a>
+</div>
+<div class="pt-page">
+
+
+<!-- ═══ HERO ═══ -->
+<section class="hero" id="top">
+  <div class="wrap">
+    <span class="pill-label">Full-stack digital studio · Tiruppur</span>
+    <h1 data-words>We build the <span class="grad">technology</span> that runs your business.</h1>
+    <p class="hero-sub">Websites, e-commerce, custom software, and SaaS platforms — designed, built, and grown by one team.</p>
+    <div class="hero-cta">
+      <a href="contact.html" class="btn btn-primary mag"><span>Start a Project</span><span class="btn-ico"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
+      <a href="services.html" class="btn btn-ghost mag"><span>Explore Services</span></a>
+    </div>
+    <div class="hero-trust">
+      <div class="ht"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> <b>10+</b> services under one roof</div>
+      <div class="ht"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> <b>100%</b> in-house build</div>
+      <div class="ht"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> <b>24/7</b> support</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TRUST MARQUEE ═══ -->
+<div class="marq">
+  <p class="marq-cap">The full digital stack, built by one team</p>
+  <div class="marq-lane">
+    <div class="marq-track" id="mtrack">
+    <div class="marq-item">Web Development</div><div class="marq-item">Shopify</div><div class="marq-item">Amazon</div>
+    <div class="marq-item">SEO</div><div class="marq-item">Mobile Apps</div><div class="marq-item">Automation</div>
+    <div class="marq-item">AI Widgets</div><div class="marq-item">Custom Software</div><div class="marq-item">Meta Ads</div>
+    <div class="marq-item">SaaS Platforms</div>
+  </div>
+  </div>
+</div>
+
+<!-- ═══ SERVICES (sticky) ═══ -->
+<section id="services">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="pill-label">Our Services</span>
+      <h2><span class="mask-line"><span>Digital Solutions That Take Your</span></span><span class="mask-line"><span>Business to the Next Level</span></span></h2>
+      <p>We design, develop, and implement the full digital stack — so you can grow smarter, not harder.</p>
+    </div>
+    <!-- Row 1 — text left / visual right -->
+    <div class="srow flip rv">
+      <div class="srow-vis" data-par="0.035">
+        <div class="uim">
+          <div class="uim-head"><b>Build Pipeline</b><span class="sp"></span></div>
+          <div class="uim-tabs"><span class="on">Design</span><span>Develop</span><span>Deploy</span></div>
+          <div class="uim-row"><span class="uim-ico"><svg viewBox="0 0 24 24"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg></span><span class="uim-tx"><b>Component library</b><i>28 components shipped</i></span><span class="uim-ck"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span></div>
+          <div class="uim-row"><span class="uim-ico"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/></svg></span><span class="uim-tx"><b>Responsive layouts</b><i>Mobile · Tablet · Desktop</i></span><span class="uim-ck"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span></div>
+          <div class="uim-row"><span class="uim-ico"><svg viewBox="0 0 24 24"><path d="M12 2v20M2 12h20"/></svg></span><span class="uim-tx"><b>Production deploy</b><i>Running build…</i></span><span class="uim-ck off"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span></div>
+          <div class="uim-bar"><i style="--w:74%"></i></div>
+          <div class="uim-note">74% complete · deploying to production</div>
+        </div>
+      </div>
+      <div class="srow-txt">
+        <span class="pill-label">Web &amp; App Development</span>
+        <h3>Build fast, scalable products</h3>
+        <p>Custom websites, web applications, and mobile apps built for speed, scale, and conversion — from first wireframe all the way to production deploy.</p>
+        <div class="srow-tags"><span>Websites</span><span>Web Apps</span><span>iOS &amp; Android</span></div>
+        <a href="service-web-development.html" class="srow-link">Learn more <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+    </div>
+
+    <!-- Row 2 — visual left / text right -->
+    <div class="srow rv">
+      <div class="srow-vis" data-par="0.035">
+        <div class="uim">
+          <div class="uim-head"><b>Store Orders</b><span class="sp"></span></div>
+          <div class="uim-tabs"><span class="on">Shopify</span><span>Amazon</span><span>WooCommerce</span></div>
+          <div class="uim-row"><span class="uim-ico"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 002 1.6h9.7a2 2 0 002-1.6L23 6H6"/></svg></span><span class="uim-tx"><b>Checkout optimized</b><i>Conversion +18%</i></span><span class="uim-ck"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span></div>
+          <div class="uim-row"><span class="uim-ico"><svg viewBox="0 0 24 24"><path d="M20 7h-9M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></svg></span><span class="uim-tx"><b>Catalog synced</b><i>1,248 products live</i></span><span class="uim-ck"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span></div>
+          <div class="uim-row"><span class="uim-ico"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></span><span class="uim-tx"><b>Revenue tracking</b><i>Live dashboard</i></span><span class="uim-ck"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span></div>
+          <div class="uim-bar"><i style="--w:88%"></i></div>
+          <div class="uim-note">Multi-platform sync healthy</div>
+        </div>
+      </div>
+      <div class="srow-txt">
+        <span class="pill-label">E-Commerce</span>
+        <h3>Sell across every platform</h3>
+        <p>Shopify stores, Amazon storefronts, and multi-platform commerce built to convert — with the catalog, checkout, and reporting handled end to end.</p>
+        <div class="srow-tags"><span>Shopify</span><span>Amazon</span><span>WooCommerce</span></div>
+        <a href="service-ecommerce.html" class="srow-link">Learn more <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+    </div>
+
+    <!-- Row 3 -->
+    <div class="srow flip rv">
+      <div class="srow-vis" data-par="0.035">
+        <div class="uim">
+          <div class="uim-head"><b>Site Audit</b><span class="sp"></span></div>
+          <div class="uim-tabs"><span class="on">Performance</span><span>SEO</span><span>Best practices</span></div>
+          <div class="uim-row"><span class="uim-ico"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></span><span class="uim-tx"><b>Page speed</b><i>1.2s → 0.4s LCP</i></span><span class="uim-ck"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span></div>
+          <div class="uim-row"><span class="uim-ico"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></span><span class="uim-tx"><b>Technical SEO</b><i>42 issues resolved</i></span><span class="uim-ck"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span></div>
+          <div class="uim-row"><span class="uim-ico"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></span><span class="uim-tx"><b>Ranking lift</b><i>Tracking 60 keywords</i></span><span class="uim-ck off"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span></div>
+          <div class="uim-bar"><i style="--w:92%"></i></div>
+          <div class="uim-note">Core Web Vitals passing</div>
+        </div>
+      </div>
+      <div class="srow-txt">
+        <span class="pill-label">SEO &amp; Optimization</span>
+        <h3>Rank higher, load faster</h3>
+        <p>Technical SEO and full rebuilds of existing sites — improving speed, structure, and ranking without losing what already works for you.</p>
+        <div class="srow-tags"><span>Technical SEO</span><span>Site Speed</span><span>Audits</span></div>
+        <a href="service-seo.html" class="srow-link">Learn more <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+    </div>
+
+    <!-- Row 4 -->
+    <div class="srow rv">
+      <div class="srow-vis" data-par="0.035">
+        <div class="uim">
+          <div class="uim-head"><b>Automations</b><span class="sp"></span></div>
+          <div class="uim-tabs"><span class="on">Active</span><span>Drafts</span></div>
+          <div class="uim-row"><span class="uim-ico"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></span><span class="uim-tx"><b>AI chat widget</b><i>Answering 24/7</i></span><span class="uim-ck"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span></div>
+          <div class="uim-row"><span class="uim-ico"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></span><span class="uim-tx"><b>Lead routing</b><i>Sent to CRM instantly</i></span><span class="uim-ck"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span></div>
+          <div class="uim-row"><span class="uim-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><span class="uim-tx"><b>Report scheduling</b><i>Every Monday, 9am</i></span><span class="uim-ck"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span></div>
+          <div class="uim-bar"><i style="--w:66%"></i></div>
+          <div class="uim-note">Manual work reduced this month</div>
+        </div>
+      </div>
+      <div class="srow-txt">
+        <span class="pill-label">Automation &amp; AI</span>
+        <h3>Automate repetitive work</h3>
+        <p>Workflow automation and AI widgets embedded directly into your site or product — cutting manual data entry, routing, and reporting out of your day.</p>
+        <div class="srow-tags"><span>AI Widgets</span><span>Workflows</span><span>Chatbots</span></div>
+        <a href="service-automation-ai.html" class="srow-link">Learn more <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+    </div>
+
+    <!-- Row 5 -->
+    <div class="srow flip rv">
+      <div class="srow-vis" data-par="0.035">
+        <div class="uim">
+          <div class="uim-head"><b>Campaigns</b><span class="sp"></span></div>
+          <div class="uim-tabs"><span class="on">Meta Ads</span><span>Organic</span></div>
+          <div class="uim-row"><span class="uim-ico"><svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg></span><span class="uim-tx"><b>Creative set</b><i>12 assets scheduled</i></span><span class="uim-ck"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span></div>
+          <div class="uim-row"><span class="uim-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><span class="uim-tx"><b>Content calendar</b><i>Next 30 days planned</i></span><span class="uim-ck"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span></div>
+          <div class="uim-row"><span class="uim-ico"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></span><span class="uim-tx"><b>Ad performance</b><i>Optimizing spend</i></span><span class="uim-ck off"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span></div>
+          <div class="uim-bar"><i style="--w:58%"></i></div>
+          <div class="uim-note">Budget pacing on target</div>
+        </div>
+      </div>
+      <div class="srow-txt">
+        <span class="pill-label">Social Media &amp; Ads</span>
+        <h3>Grow reach that converts</h3>
+        <p>Post creation, content calendars, and paid campaigns across Meta platforms — creative and targeting handled by the same team that builds your site.</p>
+        <div class="srow-tags"><span>Post Creation</span><span>Meta Ads</span><span>Creative</span></div>
+        <a href="service-social-media.html" class="srow-link">Learn more <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+    </div>
+
+    <!-- Row 6 -->
+    <div class="srow rv">
+      <div class="srow-vis" data-par="0.035">
+        <div class="uim">
+          <div class="uim-head"><b>Platform Health</b><span class="sp"></span></div>
+          <div class="uim-tabs"><span class="on">Production</span><span>Staging</span></div>
+          <div class="uim-row"><span class="uim-ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></span><span class="uim-tx"><b>Architecture</b><i>Multi-tenant, cloud-ready</i></span><span class="uim-ck"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span></div>
+          <div class="uim-row"><span class="uim-ico"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><span class="uim-tx"><b>Uptime</b><i>99.9% this quarter</i></span><span class="uim-ck"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span></div>
+          <div class="uim-row"><span class="uim-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span><span class="uim-tx"><b>Support</b><i>Ongoing after launch</i></span><span class="uim-ck"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span></div>
+          <div class="uim-bar"><i style="--w:99%"></i></div>
+          <div class="uim-note">All systems operational</div>
+        </div>
+      </div>
+      <div class="srow-txt">
+        <span class="pill-label">SaaS Product Builds</span>
+        <h3>Ship your own platform</h3>
+        <p>End-to-end SaaS — architecture, UI, deployment, and ongoing support. We build our own products, so we know what it takes to keep one running.</p>
+        <div class="srow-tags"><span>Architecture</span><span>UI/UX</span><span>Cloud</span></div>
+        <a href="service-saas.html" class="srow-link">Learn more <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PRODUCTS ═══ -->
+<section id="products">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="pill-label">Our Products</span>
+      <h2><span class="mask-line"><span>Software built to run</span></span><span class="mask-line"><span>your day-to-day.</span></span></h2>
+      <p>Beyond client work, we build our own SaaS products for real operational problems.</p>
+    </div>
+    <div class="ss-lead rv">
+      <div class="ss-lead-tx">
+        <span class="pill-label">Built In-House</span>
+        <h3>Two products, both running in the real world.</h3>
+        <p>We don&rsquo;t only build for clients &mdash; we run our own platforms on the same stack we sell. Real users, real support tickets, real scaling problems, all feeding back into the work we do for you.</p>
+      </div>
+      <div class="ss-stats">
+        <div><b>99.9%</b><i>Uptime</i></div>
+        <div><b>24/7</b><i>Support</i></div>
+        <div><b>100%</b><i>In-house</i></div>
+      </div>
+    </div>
+    <div class="svc-sticky compact rv">
+      <aside class="ss-nav">
+        <ul class="ss-list">
+          <li class="ss-item active" data-i="0">
+            <span class="ss-n">01</span>
+            <div>
+              <div class="ss-name">HephoraTech School Manager</div>
+              <p class="ss-sub">A complete school management platform &mdash; admissions to alumni, fees to gradebooks &mdash; all in one system instead of five.</p>
+            </div>
+          </li>
+          <li class="ss-item" data-i="1">
+            <span class="ss-n">02</span>
+            <div>
+              <div class="ss-name">Custom Food Delivery App</div>
+              <p class="ss-sub">A complete ordering and delivery platform for restaurants and cloud kitchens &mdash; already built and published on the Play Store for a live client.</p>
+            </div>
+          </li>
+        </ul>
+      </aside>
+      <div class="ss-stage">
+        <div class="ss-panel" data-i="0">
+          <a href="product-school-manager.html" class="ss-card" data-n="01">
+            <div class="ss-ico"><svg viewBox="0 0 24 24"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5"/></svg></div>
+            <h3>HephoraTech School Manager</h3>
+            <p>A complete school management platform &mdash; admissions to alumni, fees to gradebooks &mdash; all in one system instead of five.</p>
+            <div class="ss-tags"><span>Admissions</span><span>Fees</span><span>Attendance</span><span>Gradebooks</span></div>
+            <div class="ss-go">Explore Product <i><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></i></div>
+          </a>
+        </div>
+        <div class="ss-panel" data-i="1">
+          <a href="product-food-delivery.html" class="ss-card" data-n="02">
+            <div class="ss-ico"><svg viewBox="0 0 24 24"><path d="M3 11h18M5 11V8a7 7 0 0114 0v3"/><path d="M4 15h16a2 2 0 01-2 2H6a2 2 0 01-2-2z"/><path d="M12 4V2"/></svg></div>
+            <h3>Custom Food Delivery App</h3>
+            <p>A complete ordering and delivery platform built for your brand &mdash; customer app, restaurant dashboard, and live rider tracking in one system.</p>
+            <div class="ss-tags"><span>Customer App</span><span>Cloud Kitchen Ready</span><span>Live Tracking</span><span>On Google Play</span></div>
+            <div class="ss-go">Explore Product <i><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></i></div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ BENEFITS ═══ -->
+<section>
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="pill-label">Benefits</span>
+      <h2><span class="mask-line"><span>The advantage of one</span></span><span class="mask-line"><span>team building it all</span></span></h2>
+      <p>Discover how working with a single in-house team improves speed, cost, and quality across every part of your digital stack.</p>
+    </div>
+    <div class="benefits">
+      <div class="bcard rv"><span class="bi"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></span><h4>Faster Delivery</h4><p>No handoffs between agencies. Design, build, and launch move in one continuous line, so projects ship weeks sooner.</p></div>
+      <div class="bcard rv rv-d1"><span class="bi"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span><h4>24/7 Support</h4><p>Launch is a milestone, not a handoff. We stay on after go-live to monitor, fix, and improve whatever you're running.</p></div>
+      <div class="bcard rv rv-d2"><span class="bi"><svg viewBox="0 0 24 24"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></span><h4>Lower Total Cost</h4><p>One team instead of five vendors means fewer overheads, no duplicated work, and no budget lost in translation.</p></div>
+      <div class="bcard rv"><span class="bi"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></span><h4>Measurable Growth</h4><p>SEO, analytics, and automation are built in from day one — so you can see exactly what the work is returning.</p></div>
+      <div class="bcard rv rv-d1"><span class="bi"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></span><h4>Built to Scale</h4><p>Architecture that grows with you. The site or platform we build today won't need rebuilding when demand doubles.</p></div>
+      <div class="bcard rv rv-d2"><span class="bi"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><h4>Proven In-House</h4><p>We run our own SaaS products on the same stack we sell — so nothing reaches you that we haven't tested ourselves.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PROCESS ═══ -->
+<section id="process">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="pill-label">How We Work</span>
+      <h2><span class="mask-line"><span>Four steps. No guesswork.</span></span></h2>
+      <p>A process built for clarity — you always know what's happening and what comes next.</p>
+    </div>
+    <div class="proc">
+      <div class="pstep rv"><div class="pn">01</div><h3>Discover</h3><p>We map your goals, audience, and constraints before a single line of code.</p></div>
+      <div class="pstep rv rv-d1"><div class="pn">02</div><h3>Design &amp; Build</h3><p>Design, development, and testing — with you in the loop at every milestone.</p></div>
+      <div class="pstep rv rv-d2"><div class="pn">03</div><h3>Launch</h3><p>Deployment with full QA and a rollout plan that doesn't break what works.</p></div>
+      <div class="pstep rv rv-d3"><div class="pn">04</div><h3>Grow</h3><p>SEO, automation, and ongoing optimization long after go-live.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ STATS ═══ -->
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="band rv">
+      <div class="band-in">
+        <div class="stat"><div class="num">10<span>+</span></div><div class="cap">Services</div></div>
+        <div class="stat"><div class="num">2<span>+</span></div><div class="cap">SaaS Products</div></div>
+        <div class="stat"><div class="num">24<span>/7</span></div><div class="cap">Support</div></div>
+        <div class="stat"><div class="num">100<span>%</span></div><div class="cap">In-House Build</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ WHY US ═══ -->
+<section>
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="pill-label">Why HephoraTech</span>
+      <h2><span class="mask-line"><span>Built by builders.</span></span></h2>
+      <p>Most businesses don't need five vendors — they need one team that understands the whole picture.</p>
+    </div>
+    <div class="reasons">
+      <div class="reason rv"><div class="dot"></div><h4>One team, end to end</h4><p>Design, development, and growth under a single roof — no vendor juggling.</p></div>
+      <div class="reason rv rv-d1"><div class="dot"></div><h4>Products we build ourselves</h4><p>We don't just implement other people's software — we ship our own.</p></div>
+      <div class="reason rv rv-d2"><div class="dot"></div><h4>Fast, practical execution</h4><p>No bloated processes. Clear scope, clear timeline, clear delivery.</p></div>
+      <div class="reason rv rv-d3"><div class="dot"></div><h4>Support that continues</h4><p>Launch is a milestone, not a handoff. We stay on after go-live.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FAQ ═══ -->
+<section>
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="pill-label">FAQ</span>
+      <h2><span class="mask-line"><span>We've got the answers</span></span><span class="mask-line"><span>you're looking for.</span></span></h2>
+      <p>Quick answers to the questions we hear most.</p>
+    </div>
+    <div class="faq rv">
+      <details class="q"><summary>What kinds of projects do you take on?</summary><div class="a">Everything across the digital stack — marketing websites, web and mobile apps, e-commerce stores, custom software, SEO rebuilds, automation, and full SaaS platforms. If it's on the web or runs your business, we can build it.</div></details>
+      <details class="q"><summary>Do you work with businesses outside Tiruppur?</summary><div class="a">Yes. We're based in Tiruppur, Tamil Nadu, and work with clients worldwide. Most collaboration happens remotely with clear check-ins at every milestone.</div></details>
+      <details class="q"><summary>Can you improve or rebuild my existing website?</summary><div class="a">Absolutely. We handle technical SEO, performance rebuilds, and redesigns of existing sites — improving speed, ranking, and conversion without losing what already works.</div></details>
+      <details class="q"><summary>Do you offer support after launch?</summary><div class="a">Launch is a milestone, not a handoff. We stay on with ongoing support, optimization, and automation so your product keeps improving after go-live.</div></details>
+      <details class="q"><summary>How do we get started?</summary><div class="a">Tell us what you're trying to solve through the contact page. We'll map the goals, scope, and timeline, then show you exactly how we'd build it.</div></details>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CTA ═══ -->
+<section>
+  <div class="wrap">
+    <div class="cta-box rv">
+      <span class="pill-label">Get Started</span>
+      <h2><span class="mask-line"><span>Ready to build something real?</span></span></h2>
+      <p>Tell us what you're trying to solve — we'll tell you how to build it.</p>
+      <div class="cta-actions">
+        <a href="contact.html" class="btn btn-primary mag"><span>Start a Project</span><span class="btn-ico"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
+        <a href="services.html" class="btn btn-ghost mag"><span>View All Services</span></a>
+      </div>
+      <div class="cta-meta">
+        <div><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> Free consultation</div>
+        <div><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> No obligation quote</div>
+        <div><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> Reply within 24 hours</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-logo">
+        <img src="assets/logo-transparent.png" alt="HephoraTech">
+        <p>Engineered for what's next. Web, apps, e-commerce, and SaaS — built in Tiruppur, delivered anywhere.</p>
+        <form class="foot-news" data-demo>
+          <input type="email" placeholder="name@email.com" required>
+          <button type="submit" class="btn btn-primary btn-sm">Subscribe</button>
+        </form>
+      </div>
+      <div class="foot-col">
+        <h5>Services</h5>
+        <a href="service-web-development.html">Web &amp; App Development</a>
+        <a href="service-ecommerce.html">E-Commerce</a>
+        <a href="service-seo.html">SEO &amp; Optimization</a>
+        <a href="service-automation-ai.html">Automation &amp; AI</a>
+        <a href="service-saas.html">SaaS Product Builds</a>
+      </div>
+      <div class="foot-col">
+        <h5>Company</h5>
+        <a href="about.html">About</a>
+        <a href="products.html">Products</a>
+        <a href="services.html">All Services</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <div class="foot-col">
+        <h5>Get in touch</h5>
+        <a href="mailto:Aswath@hephoratech.com">Aswath@hephoratech.com</a>
+        <a href="tel:+919994229860">+91 99942 29860</a>
+        <a href="contact.html">Tiruppur, Tamil Nadu, India</a>
+      </div>
+    </div>
+    <div class="foot-bot">
+      <div>© 2026 HephoraTech. All rights reserved.</div>
+      <div class="socials">
+        <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
+        <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg></a>
+        <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-4 0v7h-4v-11h4v1.5A6 6 0 0116 8z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</div>
+<script src="assets/xtract.js"></script>
+</body>
+</html>

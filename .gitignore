@@ -1,0 +1,16 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+.vscode/
+.idea/
+
+# temp / build
+node_modules/
+dist/
+*.log
+
+# reference frames pulled from screen recordings (not part of the site)
+_refframes/
+_ref2/
