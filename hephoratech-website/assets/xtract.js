@@ -115,9 +115,10 @@
     const panels = [...block.querySelectorAll('.ss-panel')];
     if(!items.length || !panels.length) return;
     const setActive = i => items.forEach(it=>it.classList.toggle('active', +it.dataset.i === i));
+    setActive(0);
     const sio = new IntersectionObserver(es=>{
       es.forEach(e=>{ if(e.isIntersecting) setActive(+e.target.dataset.i); });
-    }, {rootMargin:'-45% 0px -45% 0px', threshold:0});
+    }, {rootMargin:'-35% 0px -35% 0px', threshold:0});
     panels.forEach(p=>sio.observe(p));
     items.forEach(it=>it.addEventListener('click', ()=>{
       const p = panels[+it.dataset.i];
