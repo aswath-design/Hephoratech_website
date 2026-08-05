@@ -49,6 +49,7 @@
   --shadow:0 24px 60px rgba(0,0,0,.5);
   --nav-bg:rgba(9,12,20,.55);
   --nav-shadow:0 8px 30px rgba(0,0,0,.4);
+  --nav-bg-collapsed:rgba(9,12,20,.86);
   --panel-1:rgba(11,15,24,.92);
   --panel-2:rgba(11,15,24,.98);
   --panel-3:rgba(11,15,24,.95);
@@ -128,7 +129,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:150;padding:16px 24px 0;transiti
 nav.collapsed{padding:12px 24px 0}
 nav.collapsed .nav-in{
   max-width:210px;padding:10px 30px;border-radius:100px;gap:0;
-  background:rgba(9,12,20,.86);justify-content:center;
+  background:var(--nav-bg-collapsed);justify-content:center;
 }
 nav.collapsed .nav-links,
 nav.collapsed .nav-cta,
@@ -147,7 +148,7 @@ nav.collapsed:hover,nav.collapsed:focus-within{padding:12px 24px 0}
 nav.collapsed:hover .nav-in,
 nav.collapsed:focus-within .nav-in{
   max-width:1080px;padding:9px 10px 9px 20px;border-radius:16px;gap:20px;
-  justify-content:space-between;background:rgba(9,12,20,.86);
+  justify-content:space-between;background:var(--nav-bg-collapsed);
 }
 nav.collapsed:hover .nav-links,nav.collapsed:focus-within .nav-links,
 nav.collapsed:hover .nav-cta,nav.collapsed:focus-within .nav-cta,
@@ -1050,6 +1051,7 @@ html[data-theme="light"]{
   --shadow:0 24px 60px rgba(15,35,80,.12);
   --nav-bg:rgba(255,255,255,.72);
   --nav-shadow:0 8px 30px rgba(15,35,80,.10);
+  --nav-bg-collapsed:rgba(255,255,255,.88);
   --panel-1:rgba(255,255,255,.96);
   --panel-2:rgba(255,255,255,.98);
   --panel-3:rgba(255,255,255,.97);
@@ -1073,35 +1075,39 @@ html[data-theme="light"] .pt-veil{
 }
 html[data-theme="light"] ::selection{background:var(--pur);color:#fff}
 
-/* ═══ theme toggle ═══ */
+/* ═══ theme toggle — floats in the page corner, no background plate ═══ */
 .theme-tg{
-  position:relative;flex-shrink:0;width:38px;height:38px;border-radius:12px;
-  display:grid;place-items:center;cursor:pointer;overflow:hidden;
-  background:var(--w04);border:1px solid var(--line-2);color:var(--text);
-  transition:background .45s var(--soft),border-color .45s var(--soft),transform .5s var(--soft);
+  position:fixed;top:26px;right:28px;z-index:200;
+  width:34px;height:34px;display:grid;place-items:center;
+  background:none;border:0;padding:0;cursor:pointer;
+  color:var(--muted);
+  transition:color .45s var(--soft),transform .55s var(--soft);
 }
-.theme-tg:hover{background:var(--w08);border-color:var(--pur);transform:translateY(-1px)}
-.theme-tg:active{transform:scale(.93)}
+.theme-tg:hover{color:var(--pur-3);transform:translateY(-1px) rotate(-8deg)}
+.theme-tg:active{transform:scale(.88)}
+.theme-tg:focus-visible{outline:2px solid var(--pur);outline-offset:5px;border-radius:10px}
 .theme-tg svg{
-  position:absolute;width:17px;height:17px;fill:none;stroke:currentColor;
+  position:absolute;width:21px;height:21px;fill:none;stroke:currentColor;
   stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;
-  transition:transform .65s var(--soft),opacity .45s var(--soft);
+  filter:drop-shadow(0 1px 2px rgba(0,0,0,.45));
+  transition:transform .7s var(--soft),opacity .45s var(--soft);
 }
-/* dark mode: show moon, hide sun */
-.theme-tg .ic-sun{opacity:0;transform:rotate(-70deg) scale(.4)}
+html[data-theme="light"] .theme-tg svg{filter:drop-shadow(0 1px 4px rgba(15,35,80,.18))}
+/* dark mode shows the moon, light mode shows the sun */
+.theme-tg .ic-sun{opacity:0;transform:rotate(-80deg) scale(.35)}
 .theme-tg .ic-moon{opacity:1;transform:rotate(0) scale(1)}
 html[data-theme="light"] .theme-tg .ic-sun{opacity:1;transform:rotate(0) scale(1)}
-html[data-theme="light"] .theme-tg .ic-moon{opacity:0;transform:rotate(70deg) scale(.4)}
-/* ripple that sweeps out of the button on switch */
+html[data-theme="light"] .theme-tg .ic-moon{opacity:0;transform:rotate(80deg) scale(.35)}
+/* soft halo pulse on switch — no permanent plate behind the icon */
 .theme-tg::after{
-  content:'';position:absolute;inset:0;border-radius:inherit;
-  background:radial-gradient(circle at 50% 50%,var(--pur-soft),transparent 70%);
-  opacity:0;transform:scale(.2);
+  content:'';position:absolute;width:34px;height:34px;border-radius:50%;
+  background:radial-gradient(circle,var(--pur-soft),transparent 70%);
+  opacity:0;transform:scale(.3);pointer-events:none;
 }
-.theme-tg.pulse::after{animation:tgPulse .75s var(--soft)}
+.theme-tg.pulse::after{animation:tgPulse .8s var(--soft)}
 @keyframes tgPulse{
-  0%{opacity:.9;transform:scale(.2)}
-  100%{opacity:0;transform:scale(2.6)}
+  0%{opacity:1;transform:scale(.3)}
+  100%{opacity:0;transform:scale(3.2)}
 }
 /* global cross-fade while switching */
 html.theming,
@@ -1128,9 +1134,10 @@ html.theming .info-item{
   .theme-tg.pulse::after{animation:none}
   html.theming *{transition:none !important}
 }
-@media(max-width:860px){
-  .theme-tg{width:34px;height:34px;border-radius:10px}
-  .theme-tg svg{width:15px;height:15px}
+@media(max-width:1180px){
+  /* nav pill reaches the edges here, so tuck the icon under it */
+  .theme-tg{top:auto;bottom:22px;right:20px}
+  .theme-tg svg{width:19px;height:19px}
 }
 
 /* ═══ footer ═══ */

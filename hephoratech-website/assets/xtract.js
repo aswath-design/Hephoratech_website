@@ -489,11 +489,13 @@
   (function themeToggle(){
     const root = document.documentElement;
 
-    const SUN = '<svg class="ic-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/>'
-      + '<path d="M12 2.4v2.2M12 19.4v2.2M2.4 12h2.2M19.4 12h2.2'
-      + 'M5.2 5.2l1.6 1.6M17.2 17.2l1.6 1.6M18.8 5.2l-1.6 1.6M6.8 17.2l-1.6 1.6"/></svg>';
-    const MOON = '<svg class="ic-moon" viewBox="0 0 24 24">'
-      + '<path d="M20.5 14.4A8.6 8.6 0 019.6 3.5a8.7 8.7 0 105 10.9z"/></svg>';
+    const SUN = '<svg class="ic-sun" viewBox="0 0 24 24" aria-hidden="true">'
+      + '<circle cx="12" cy="12" r="4.6"/>'
+      + '<path d="M12 1.8v2.4M12 19.8v2.4M22.2 12h-2.4M4.2 12H1.8'
+      + 'M19.21 4.79l-1.7 1.7M6.49 17.51l-1.7 1.7M19.21 19.21l-1.7-1.7M6.49 6.49l-1.7-1.7"/>'
+      + '</svg>';
+    const MOON = '<svg class="ic-moon" viewBox="0 0 24 24" aria-hidden="true">'
+      + '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
 
     function apply(mode, animate){
       if(animate){
@@ -515,23 +517,21 @@
       return root.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
     }
 
-    // build a button and drop it into every nav
-    document.querySelectorAll('.nav-in').forEach(navIn=>{
-      if(navIn.querySelector('.theme-tg')) return;
+    // one floating button in the page corner — deliberately NOT inside .nav-in,
+    // otherwise it blocks the nav pill from collapsing
+    if(!document.querySelector('.theme-tg')){
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'theme-tg';
       btn.innerHTML = SUN + MOON;
       btn.addEventListener('click', ()=>{
         btn.classList.remove('pulse');
-        void btn.offsetWidth;              // restart the ripple
+        void btn.offsetWidth;              // restart the halo
         btn.classList.add('pulse');
         apply(current() === 'light' ? 'dark' : 'light', true);
       });
-      const cta = navIn.querySelector('.nav-cta');
-      if(cta) navIn.insertBefore(btn, cta);
-      else navIn.appendChild(btn);
-    });
+      document.body.appendChild(btn);
+    }
 
     apply(current(), false);   // sync labels with whatever the inline script set
 
