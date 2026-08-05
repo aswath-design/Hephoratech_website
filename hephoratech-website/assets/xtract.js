@@ -314,12 +314,22 @@
         a:Math.random(), s:Math.random()*.02+.004
       }));
     }
+    // cached so we don't force a style recalc every frame
+    let starRGB = '190,214,255';
+    function syncStarColor(){
+      const v = getComputedStyle(document.documentElement)
+                  .getPropertyValue('--star').trim();
+      if(v) starRGB = v;
+    }
+    syncStarColor();
+    addEventListener('themechange', syncStarColor);
+
     function draw(){
       ctx.clearRect(0,0,w,h);
       for(const st of stars){
         st.a += st.s; const al = .35 + Math.abs(Math.sin(st.a))*.6;
         ctx.beginPath(); ctx.arc(st.x, st.y, st.r, 0, 7);
-        ctx.fillStyle = `rgba(190,214,255,${al})`; ctx.fill();
+        ctx.fillStyle = `rgba(${starRGB},${al})`; ctx.fill();
       }
       requestAnimationFrame(draw);
     }
@@ -474,4 +484,64 @@
       requestAnimationFrame(drift);
     })();
   }
+
+  /* ---- theme toggle: dark <-> light, remembered across visits ---- */
+  (function themeToggle(){
+    const root = document.documentElement;
+
+    const SUN = '<svg class="ic-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/>'
+      + '<path d="M12 2.4v2.2M12 19.4v2.2M2.4 12h2.2M19.4 12h2.2'
+      + 'M5.2 5.2l1.6 1.6M17.2 17.2l1.6 1.6M18.8 5.2l-1.6 1.6M6.8 17.2l-1.6 1.6"/></svg>';
+    const MOON = '<svg class="ic-moon" viewBox="0 0 24 24">'
+      + '<path d="M20.5 14.4A8.6 8.6 0 019.6 3.5a8.7 8.7 0 105 10.9z"/></svg>';
+
+    function apply(mode, animate){
+      if(animate){
+        root.classList.add('theming');
+        clearTimeout(apply._t);
+        apply._t = setTimeout(()=>root.classList.remove('theming'), 700);
+      }
+      if(mode === 'light') root.setAttribute('data-theme','light');
+      else root.removeAttribute('data-theme');
+      try{ localStorage.setItem('ht-theme', mode); }catch(e){}
+      document.querySelectorAll('.theme-tg').forEach(b=>{
+        b.setAttribute('aria-label', mode === 'light' ? 'Switch to dark theme' : 'Switch to light theme');
+        b.setAttribute('aria-pressed', mode === 'light' ? 'true' : 'false');
+      });
+      dispatchEvent(new CustomEvent('themechange', {detail:{mode}}));
+    }
+
+    function current(){
+      return root.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+    }
+
+    // build a button and drop it into every nav
+    document.querySelectorAll('.nav-in').forEach(navIn=>{
+      if(navIn.querySelector('.theme-tg')) return;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'theme-tg';
+      btn.innerHTML = SUN + MOON;
+      btn.addEventListener('click', ()=>{
+        btn.classList.remove('pulse');
+        void btn.offsetWidth;              // restart the ripple
+        btn.classList.add('pulse');
+        apply(current() === 'light' ? 'dark' : 'light', true);
+      });
+      const cta = navIn.querySelector('.nav-cta');
+      if(cta) navIn.insertBefore(btn, cta);
+      else navIn.appendChild(btn);
+    });
+
+    apply(current(), false);   // sync labels with whatever the inline script set
+
+    // follow the OS only while the visitor hasn't chosen for themselves
+    const mq = matchMedia('(prefers-color-scheme: light)');
+    mq.addEventListener && mq.addEventListener('change', e=>{
+      let saved = null;
+      try{ saved = localStorage.getItem('ht-theme'); }catch(err){}
+      if(!saved) apply(e.matches ? 'light' : 'dark', true);
+    });
+  })();
+
 })();
