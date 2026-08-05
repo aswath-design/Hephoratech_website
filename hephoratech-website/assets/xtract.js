@@ -497,12 +497,7 @@
     const MOON = '<svg class="ic-moon" viewBox="0 0 24 24" aria-hidden="true">'
       + '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
 
-    function apply(mode, animate){
-      if(animate){
-        root.classList.add('theming');
-        clearTimeout(apply._t);
-        apply._t = setTimeout(()=>root.classList.remove('theming'), 700);
-      }
+    function swap(mode){
       if(mode === 'light') root.setAttribute('data-theme','light');
       else root.removeAttribute('data-theme');
       try{ localStorage.setItem('ht-theme', mode); }catch(e){}
@@ -511,6 +506,44 @@
         b.setAttribute('aria-pressed', mode === 'light' ? 'true' : 'false');
       });
       dispatchEvent(new CustomEvent('themechange', {detail:{mode}}));
+    }
+
+    /* The new theme washes over the page as a circle growing out of the
+       icon. Needs View Transitions; anything else gets the crossfade. */
+    function apply(mode, animate, origin){
+      const canWave = animate && !reduce && document.startViewTransition && origin;
+
+      if(!canWave){
+        if(animate){
+          root.classList.add('theming');
+          clearTimeout(apply._t);
+          apply._t = setTimeout(()=>root.classList.remove('theming'), 700);
+        }
+        swap(mode);
+        return;
+      }
+
+      // reach from the icon to whichever page corner is furthest away
+      const far = Math.hypot(
+        Math.max(origin.x, innerWidth  - origin.x),
+        Math.max(origin.y, innerHeight - origin.y)
+      );
+
+      root.classList.add('wave');
+      const vt = document.startViewTransition(()=>swap(mode));
+
+      vt.ready.then(()=>{
+        root.animate(
+          { clipPath:[`circle(0px at ${origin.x}px ${origin.y}px)`,
+                      `circle(${far}px at ${origin.x}px ${origin.y}px)`] },
+          { duration:820, easing:'cubic-bezier(.22,.68,.24,1)',
+            pseudoElement:'::view-transition-new(root)' }
+        );
+      }).catch(()=>{});
+
+      vt.finished.then(()=>root.classList.remove('wave')).catch(()=>{
+        root.classList.remove('wave');
+      });
     }
 
     function current(){
@@ -528,7 +561,9 @@
         btn.classList.remove('pulse');
         void btn.offsetWidth;              // restart the halo
         btn.classList.add('pulse');
-        apply(current() === 'light' ? 'dark' : 'light', true);
+        const r = btn.getBoundingClientRect();
+        apply(current() === 'light' ? 'dark' : 'light', true,
+              {x:r.left + r.width/2, y:r.top + r.height/2});
       });
       document.body.appendChild(btn);
     }
