@@ -467,6 +467,67 @@
     c.addEventListener('mouseleave', ()=>{ c.style.transform=''; });
   });
 
+
+  /* ---- services spotlight grid ---- */
+  (function spotlightGrid(){
+    const slab = document.getElementById('sgSlab');
+    if(!slab) return;
+    const glow  = slab.querySelector('.sg-glow');
+    const tiles = [...slab.querySelectorAll('.sg-tile')];
+    tiles.forEach((t,i)=>t.style.setProperty('--d', i));
+
+    // staggered entry once the slab scrolls in
+    new IntersectionObserver((es,ob)=>{
+      es.forEach(e=>{ if(e.isIntersecting){ slab.classList.add('in'); ob.unobserve(e.target); } });
+    }, {threshold:.15}).observe(slab);
+
+    if(reduce) return;
+
+    const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+    if(fine){
+      // glow eases toward the cursor instead of snapping to it
+      let tx=0, ty=0, cx=0, cy=0, on=false, raf=0, idle=0, t0=performance.now();
+      slab.addEventListener('mousemove', e=>{
+        const r = slab.getBoundingClientRect();
+        tx = e.clientX - r.left; ty = e.clientY - r.top;
+        if(!on){ cx = tx; cy = ty; on = true; slab.classList.add('lit'); }
+        idle = 0;
+        if(!raf) raf = requestAnimationFrame(loop);
+      }, {passive:true});
+      slab.addEventListener('mouseleave', ()=>{ on = false; slab.classList.remove('lit'); });
+
+      function loop(now){
+        cx += (tx-cx)*.12; cy += (ty-cy)*.12;
+        // gentle drift so it never sits perfectly still
+        idle += 1;
+        const drift = idle > 90 ? Math.sin((now-t0)/900)*9 : 0;
+        glow.style.left = (cx + drift) + 'px';
+        glow.style.top  = (cy + Math.cos((now-t0)/1100)*(idle>90?7:0)) + 'px';
+        raf = on || Math.abs(tx-cx) > .5 ? requestAnimationFrame(loop) : 0;
+      }
+    } else {
+      // touch: whichever tile is nearest the middle of the screen lights up
+      const pick = ()=>{
+        const mid = innerHeight/2;
+        let best = null, bd = 1e9;
+        tiles.forEach(t=>{
+          const r = t.getBoundingClientRect();
+          if(r.bottom < 0 || r.top > innerHeight) return;
+          const d = Math.abs(r.top + r.height/2 - mid);
+          if(d < bd){ bd = d; best = t; }
+        });
+        tiles.forEach(t=>t.classList.toggle('near', t === best));
+      };
+      let tick = false;
+      addEventListener('scroll', ()=>{
+        if(tick) return; tick = true;
+        requestAnimationFrame(()=>{ pick(); tick = false; });
+      }, {passive:true});
+      pick();
+    }
+  })();
+
   /* ---- orbs drift with cursor ---- */
   const orbs = [...document.querySelectorAll('.orb')];
   if(orbs.length){

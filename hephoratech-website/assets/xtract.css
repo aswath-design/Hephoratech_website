@@ -56,6 +56,7 @@
   --grad-dock:linear-gradient(170deg,rgba(16,21,34,.97),rgba(7,10,17,.98));
   --band-text:#EEF2FA;
   --band-shadow:0 28px 70px rgba(0,0,0,.45);
+  --sg-glow-c:rgba(30,95,255,.17);
   --ok-text:#7BE0A4;
 
   --panel-1:rgba(11,15,24,.92);
@@ -1066,6 +1067,7 @@ html[data-theme="light"]{
   --grad-dock:linear-gradient(170deg,#FFFFFF,#F5F8FD);
   --band-text:#0B1220;
   --band-shadow:0 24px 60px rgba(15,35,80,.10);
+  --sg-glow-c:rgba(30,95,255,.13);
   --ok-text:#16794A;
 
   --panel-1:rgba(255,255,255,.96);
@@ -1173,6 +1175,102 @@ html.theming .info-item{
   /* nav pill reaches the edges here, so tuck the icon under it */
   .theme-tg{top:auto;bottom:22px;right:20px}
   .theme-tg svg{width:19px;height:19px}
+}
+
+
+/* ═══════════════════════════════════════════════
+   SERVICES — spotlight grid
+   ═══════════════════════════════════════════════ */
+.sg-slab{
+  position:relative;border:1px solid var(--line);border-radius:20px;overflow:hidden;
+  background:var(--w02);
+}
+/* cursor glow — one continuous light across the whole slab */
+.sg-glow{
+  position:absolute;width:520px;height:520px;border-radius:50%;z-index:0;
+  pointer-events:none;left:-999px;top:-999px;transform:translate(-50%,-50%);
+  background:radial-gradient(circle,var(--sg-glow-c),transparent 62%);
+  opacity:0;transition:opacity .6s var(--soft);
+}
+.sg-slab.lit .sg-glow{opacity:1}
+.sg-grid{
+  position:relative;z-index:1;
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);
+}
+.sg-tile{
+  position:relative;display:block;background:var(--bg);
+  padding:30px 26px 26px;overflow:hidden;
+  transition:background .55s var(--soft);
+}
+.sg-tile::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(140deg,var(--pur-soft),transparent 58%);
+  opacity:0;transition:opacity .55s var(--soft);
+}
+.sg-tile:hover,.sg-tile.near{background:var(--w035)}
+.sg-tile:hover::before{opacity:1}
+.sg-n{
+  position:absolute;top:22px;right:24px;font-size:.72rem;font-weight:700;
+  letter-spacing:.06em;color:var(--muted-2);opacity:.5;
+  transition:color .5s var(--soft),opacity .5s var(--soft);
+}
+.sg-tile:hover .sg-n,.sg-tile.near .sg-n{color:var(--pur-3);opacity:1}
+.sg-ico{
+  position:relative;width:46px;height:46px;border-radius:13px;display:grid;place-items:center;
+  background:var(--pur-soft);border:1px solid rgba(30,95,255,.22);color:var(--pur-3);
+  margin-bottom:20px;
+  transition:transform .6s var(--soft),background .5s var(--soft),color .5s var(--soft),box-shadow .5s var(--soft);
+}
+.sg-ico svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.sg-tile:hover .sg-ico,.sg-tile.near .sg-ico{
+  transform:translateY(-4px) scale(1.07);
+  background:var(--pur);color:#fff;border-color:transparent;
+  box-shadow:0 10px 26px rgba(30,95,255,.42);
+}
+.sg-tile h3{
+  position:relative;font-size:1.14rem;font-weight:700;letter-spacing:-.02em;
+  color:var(--text);margin-bottom:9px;
+  transition:transform .55s var(--soft),color .45s var(--soft);
+}
+.sg-tile:hover h3,.sg-tile.near h3{transform:translateX(4px)}
+.sg-tile p{
+  position:relative;color:var(--muted);font-size:.9rem;line-height:1.62;margin-bottom:16px;
+}
+.sg-tags{position:relative;display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px}
+.sg-tags span{
+  font-size:.67rem;padding:5px 11px;border-radius:100px;
+  background:var(--w05);border:1px solid var(--line-2);color:var(--muted);
+  transition:border-color .45s var(--soft),color .45s var(--soft);
+}
+.sg-tile:hover .sg-tags span,.sg-tile.near .sg-tags span{border-color:rgba(30,95,255,.3);color:var(--pur-3)}
+.sg-go{
+  position:relative;display:inline-flex;align-items:center;gap:7px;
+  font-size:.8rem;font-weight:600;color:var(--pur-2);
+  opacity:0;transform:translateX(-8px);
+  transition:opacity .5s var(--soft),transform .55s var(--soft);
+}
+.sg-go svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.sg-tile:hover .sg-go,.sg-tile.near .sg-go{opacity:1;transform:none}
+/* staggered entry */
+.sg-tile{opacity:0;transform:translateY(16px)}
+.sg-slab.in .sg-tile{
+  animation:sgIn .85s var(--ease) both;
+  animation-delay:calc(var(--d,0) * 85ms);
+}
+@keyframes sgIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){
+  .sg-tile{opacity:1;transform:none}
+  .sg-slab.in .sg-tile{animation:none}
+  .sg-glow{display:none}
+}
+@media(max-width:1000px){
+  .sg-grid{grid-template-columns:repeat(2,1fr)}
+  .sg-tile{padding:26px 22px 22px}
+}
+@media(max-width:620px){
+  .sg-grid{grid-template-columns:1fr}
+  .sg-slab{border-radius:16px}
+  .sg-tile h3{font-size:1.06rem}
 }
 
 /* ═══ footer ═══ */
