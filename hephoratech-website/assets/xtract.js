@@ -327,8 +327,9 @@
     addEventListener('resize', resize, {passive:true});
   }
 
-  /* ---- chat dock: WhatsApp bubble + chat widget ---- */
+  /* ---- chat dock: WhatsApp bubble + chat widget (temporarily disabled) ---- */
   (function chatDock(){
+    return; // remove this line to re-enable the chat widget
     const WA_NUMBER = '919994229860';                 // +91 99942 29860
     const WA_TEXT   = encodeURIComponent("Hi HephoraTech! I'd like to talk about a project.");
     const waLink    = `https://wa.me/${WA_NUMBER}?text=${WA_TEXT}`;
