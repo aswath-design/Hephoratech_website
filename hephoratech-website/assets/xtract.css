@@ -1900,7 +1900,7 @@ footer::before{
 /* chat furniture stays hidden until the gate is cleared */
 .ai-body,.ai-form{display:none}
 .ai-panel.chatting .ai-body{display:flex}
-.ai-panel.chatting .ai-panel.chatting .ai-form{display:flex}
+.ai-panel.chatting .ai-form{display:flex}
 @media(max-width:560px){
   .ai-teaser{max-width:200px;font-size:.79rem;padding:11px 26px 11px 14px}
 }
