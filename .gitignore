@@ -14,3 +14,9 @@ dist/
 # reference frames pulled from screen recordings (not part of the site)
 _refframes/
 _ref2/
+
+# local safety backups
+*.bak
+
+# v2 rebuild — local only, not deployed
+hephoratech-v2/
