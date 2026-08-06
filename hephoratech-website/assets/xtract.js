@@ -337,196 +337,263 @@
     addEventListener('resize', resize, {passive:true});
   }
 
-  /* ---- chat dock: WhatsApp bubble + chat widget (temporarily disabled) ---- */
-  (function chatDock(){
-    return; // remove this line to re-enable the chat widget
-    const WA_NUMBER = '919994229860';                 // +91 99942 29860
-    const WA_TEXT   = encodeURIComponent("Hi HephoraTech! I'd like to talk about a project.");
-    const waLink    = `https://wa.me/${WA_NUMBER}?text=${WA_TEXT}`;
+  /* ---- AI agent: liquid-glass dock ---- */
+  (function agent(){
+    const LABEL = ['Need a website or app?', 'Ask me'];
 
     const dock = document.createElement('div');
-    dock.className = 'chat-dock';
+    dock.className = 'ai-dock';
     dock.innerHTML = `
-      <div class="cd-panel" role="dialog" aria-label="Chat with HephoraTech">
-        <div class="cd-head">
-          <div class="cd-avatar">HT</div>
-          <div class="cd-head-tx"><b>HephoraTech</b><i>Typically replies in minutes</i></div>
-          <button class="cd-close" aria-label="Close chat">&times;</button>
+      <div class="ai-panel" role="dialog" aria-label="Chat with the HephoraTech agent">
+        <div class="ai-sheen" aria-hidden="true"></div>
+        <header class="ai-head">
+          <span class="ai-avatar" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 2.2l2.15 5.4a4 4 0 002.25 2.25L21.8 12l-5.4 2.15a4 4 0 00-2.25 2.25L12 21.8l-2.15-5.4a4 4 0 00-2.25-2.25L2.2 12l5.4-2.15a4 4 0 002.25-2.25z"/></svg>
+          </span>
+          <span class="ai-id">
+            <b>HephoraTech Agent</b>
+            <i><span class="ai-live"></span>Usually replies instantly</i>
+          </span>
+          <button class="ai-x" aria-label="Close chat">
+            <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+        </header>
+
+        <div class="ai-gate">
+          <span class="ai-gate-ic" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </span>
+          <h4>Before we start</h4>
+          <p>Just so we know who we're talking to &mdash; and can follow up if you'd like a quote.</p>
+          <form class="ai-gate-form">
+            <input class="ai-gate-in" name="name" type="text" placeholder="Your name" autocomplete="name" required maxlength="60">
+            <input class="ai-gate-in" name="phone" type="tel" placeholder="Phone or WhatsApp number" autocomplete="tel" required maxlength="20">
+            <button class="ai-gate-go" type="submit"><span>Start chatting</span>
+              <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </button>
+          </form>
+          <button class="ai-skip" type="button">Skip for now</button>
         </div>
-        <div class="cd-body">
-          <div class="cd-msg"><span class="av">HT</span><div class="cd-bub">Hi there 👋 Thanks for stopping by!</div></div>
-          <div class="cd-msg"><span class="av">HT</span><div class="cd-bub">What can we help you build today?</div></div>
-        </div>
-        <div class="cd-quick">
-          <button data-q="I'd like a new website">New website</button>
-          <button data-q="I need an e-commerce store">E-commerce</button>
-          <button data-q="I'm interested in a custom app">Custom app</button>
-          <button data-q="I'd like a quote">Get a quote</button>
-        </div>
-        <div class="cd-foot">
-          <a href="${waLink}" target="_blank" rel="noopener" class="btn btn-primary btn-sm">
-            <span>Chat on WhatsApp</span>
-            <span class="btn-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-          </a>
-          <div class="cd-note">or <a href="contact.html" style="color:var(--pur-3)">send us a message</a></div>
-        </div>
+
+        <div class="ai-body" role="log" aria-live="polite"></div>
+        <form class="ai-form">
+          <input class="ai-input" type="text" placeholder="Ask about our services…" autocomplete="off" maxlength="600" aria-label="Your message">
+          <button class="ai-send" type="submit" aria-label="Send">
+            <svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg>
+          </button>
+        </form>
       </div>
-      <div class="cd-actions">
-        <a class="cd-btn cd-wa" href="${waLink}" target="_blank" rel="noopener" aria-label="WhatsApp">
-          <span class="cd-tip">Chat on WhatsApp</span>
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.7 1-.9 1.2-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.5-.5c.1-.2.2-.3.3-.5 0-.2 0-.4 0-.5 0-.2-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1.1 2.8 1.2 3c.2.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.1-.3-.2-.6-.3z"/><path d="M12 2a10 10 0 00-8.6 15L2 22l5.1-1.3A10 10 0 1012 2zm0 18.2c-1.6 0-3.1-.4-4.4-1.2l-.3-.2-3 .8.8-3-.2-.3A8.2 8.2 0 1112 20.2z"/></svg>
-        </a>
-        <button class="cd-btn cd-chat" aria-label="Open chat" aria-expanded="false">
-          <span class="cd-tip">Need help? Chat with us</span>
-          <span class="cd-dot">1</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-        </button>
-      </div>`;
+
+      <button class="ai-teaser" type="button" aria-label="Chat with the HephoraTech agent">
+        <b>${LABEL[0]}</b> <i>${LABEL[1]}</i>
+      </button>
+
+      <button class="ai-fab" aria-label="Chat with the HephoraTech agent" aria-expanded="false">
+        <span class="ai-fab-glow" aria-hidden="true"></span>
+        <svg class="ai-i-chat" viewBox="0 0 24 24"><path d="M12 2.2l2.15 5.4a4 4 0 002.25 2.25L21.8 12l-5.4 2.15a4 4 0 00-2.25 2.25L12 21.8l-2.15-5.4a4 4 0 00-2.25-2.25L2.2 12l5.4-2.15a4 4 0 002.25-2.25z"/><path d="M18.6 3.1l.62 1.58 1.58.62-1.58.62-.62 1.58-.62-1.58L16.4 5.3l1.58-.62z"/></svg>
+        <span class="ai-badge">1</span>
+      </button>`;
     document.body.appendChild(dock);
 
-    const toggleBtn = dock.querySelector('.cd-chat');
-    const closeBtn  = dock.querySelector('.cd-close');
-    const dot       = dock.querySelector('.cd-dot');
-    const body      = dock.querySelector('.cd-body');
+    const panel  = dock.querySelector('.ai-panel');
+    const fab    = dock.querySelector('.ai-fab');
+    const body   = dock.querySelector('.ai-body');
+    const form   = dock.querySelector('.ai-form');
+    const input  = dock.querySelector('.ai-input');
+    const badge  = dock.querySelector('.ai-badge');
+    const gate   = dock.querySelector('.ai-gate');
+    const gform  = dock.querySelector('.ai-gate-form');
+    const teaser = dock.querySelector('.ai-teaser');
+
+    let history = [], busy = false, started = false;
+    let lead = null;
+    try{ lead = JSON.parse(sessionStorage.getItem('ht-lead') || 'null'); }catch(e){}
+
+    function bubble(role, text){
+      const row = document.createElement('div');
+      row.className = 'ai-row ' + role;
+      row.innerHTML = '<div class="ai-bub"></div>';
+      row.querySelector('.ai-bub').textContent = text;
+      body.appendChild(row);
+      body.scrollTop = body.scrollHeight;
+      return row;
+    }
+    function typing(){
+      const row = document.createElement('div');
+      row.className = 'ai-row bot ai-typing';
+      row.innerHTML = '<div class="ai-bub"><span></span><span></span><span></span></div>';
+      body.appendChild(row); body.scrollTop = body.scrollHeight;
+      return row;
+    }
+
+    function greet(){
+      const who = lead && lead.name ? lead.name.split(' ')[0] : null;
+      const hello = who
+        ? `Hi ${who} — good to meet you. How can I help today?`
+        : "Hi — I'm the HephoraTech agent. How can I help today?";
+      setTimeout(()=>{ bubble('bot', hello); }, 320);
+    }
+
+    function begin(){
+      if(started) return;
+      started = true;
+      gate.classList.add('done');
+      panel.classList.add('chatting');
+      // give the model the visitor's details as quiet context
+      if(lead){
+        history.push({role:'user', content:
+          `[Context — do not repeat back verbatim] Visitor name: ${lead.name}. Contact: ${lead.phone}. Greet them by first name once, then help.`});
+        history.push({role:'assistant', content:'Understood.'});
+      }
+      greet();
+      setTimeout(()=>input.focus(), 420);
+    }
+
+    gform.addEventListener('submit', e=>{
+      e.preventDefault();
+      const name  = gform.name.value.trim();
+      const phone = gform.phone.value.trim();
+      if(!name || !phone) return;
+      lead = {name, phone};
+      try{ sessionStorage.setItem('ht-lead', JSON.stringify(lead)); }catch(err){}
+      begin();
+    });
+    dock.querySelector('.ai-skip').addEventListener('click', ()=>{ lead = null; begin(); });
+
+    async function ask(text){
+      history.push({role:'user', content:text});
+      bubble('me', text);
+      busy = true; input.disabled = true;
+      const t = typing();
+      try{
+        const res  = await fetch('/api/chat', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:history})});
+        const data = await res.json().catch(()=>({}));
+        t.remove();
+        if(res.ok && data.reply){
+          history.push({role:'assistant', content:data.reply});
+          bubble('bot', data.reply);
+        }else{
+          bubble('bot', data.error && data.error.indexOf('not configured') > -1
+            ? "The agent isn't switched on yet. In the meantime, email Aswath@hephoratech.com or call +91 99942 29860 and we'll reply personally."
+            : "Sorry — I couldn't reach the agent just then. Please try again in a moment.");
+        }
+      }catch(err){
+        t.remove();
+        bubble('bot', "Something went wrong reaching the agent. Please try again, or email Aswath@hephoratech.com.");
+      }finally{
+        busy = false; input.disabled = false; input.focus();
+      }
+    }
+
+    form.addEventListener('submit', e=>{
+      e.preventDefault();
+      const v = input.value.trim();
+      if(!v || busy) return;
+      input.value=''; ask(v);
+    });
 
     function open(){
       dock.classList.add('open');
-      toggleBtn.setAttribute('aria-expanded','true');
-      if(dot) dot.style.display = 'none';
+      fab.setAttribute('aria-expanded','true');
+      badge.style.display='none';
+      teaser.classList.remove('show');
+      if(lead && !started) begin();
+      else if(!started) setTimeout(()=>{ const f = gform.querySelector('input'); if(f) f.focus(); }, 480);
     }
     function close(){
       dock.classList.remove('open');
-      toggleBtn.setAttribute('aria-expanded','false');
+      fab.setAttribute('aria-expanded','false');
     }
-    toggleBtn.addEventListener('click', ()=> dock.classList.contains('open') ? close() : open());
-    closeBtn.addEventListener('click', close);
-    addEventListener('keydown', e=>{ if(e.key === 'Escape') close(); });
+    fab.addEventListener('click', open);
+    dock.querySelector('.ai-x').addEventListener('click', close);
+    addEventListener('keydown', e=>{ if(e.key==='Escape' && dock.classList.contains('open')) close(); });
 
-    /* quick replies hand off to WhatsApp with the chosen message */
-    dock.querySelectorAll('.cd-quick button').forEach(b=>{
-      b.addEventListener('click', ()=>{
-        // echo the choice into the thread, then show a typing bubble
-        const mine = document.createElement('div');
-        mine.className = 'cd-msg';
-        mine.style.cssText = 'flex-direction:row-reverse;animation-delay:0s';
-        mine.innerHTML = `<div class="cd-bub" style="background:var(--pur-soft);border-color:rgba(30,95,255,.3);border-radius:14px 4px 14px 14px">${b.textContent}</div>`;
-        body.appendChild(mine); body.scrollTop = body.scrollHeight;
-
-        const typing = document.createElement('div');
-        typing.className = 'cd-msg';
-        typing.style.animationDelay = '0s';
-        typing.innerHTML = `<span class="av">HT</span><div class="cd-bub cd-typing"><i></i><i></i><i></i></div>`;
-        setTimeout(()=>{ body.appendChild(typing); body.scrollTop = body.scrollHeight; }, 260);
-
-        setTimeout(()=>{
-          window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(b.dataset.q)}`, '_blank', 'noopener');
-          typing.remove();
-        }, 1150);
-      });
-    });
-
-    /* nudge the user once, after they've had a look around */
-    if(!sessionStorage.getItem('ht-chat-seen')){
+    // teaser + nudge, once per visit
+    // the label shows on every visit; only the attention nudge is once-per-visit
+    const firstTime = !sessionStorage.getItem('ht-ai-seen');
+    setTimeout(()=>{
+      if(!dock.classList.contains('open')) teaser.classList.add('show');
+    }, 2200);
+    if(firstTime){
       setTimeout(()=>{
-        if(!dock.classList.contains('open')){
-          toggleBtn.style.animation = 'none';
-          toggleBtn.offsetHeight;
-          toggleBtn.style.animation = 'cdIn .6s var(--soft)';
-        }
-        sessionStorage.setItem('ht-chat-seen','1');
-      }, 12000);
+        if(!dock.classList.contains('open')) fab.classList.add('nudge');
+        sessionStorage.setItem('ht-ai-seen','1');
+      }, 4500);
+      setTimeout(()=>fab.classList.remove('nudge'), 7200);
+    }else{
+      badge.style.display='none';
     }
+  })();
+
+  /* ---- services branch tree: trunk grows, branches light up ---- */
+  (function branchTree(){
+    const tree = document.getElementById('svcTree');
+    if(!tree) return;
+    const fill = tree.querySelector('.tree-fill');
+    const rows = [...tree.querySelectorAll('.tree-row')];
+    if(!rows.length) return;
+
+    if(reduce){ rows.forEach(r=>r.classList.add('lit')); if(fill) fill.style.height='100%'; return; }
+
+    const LINE = 0.62;          // a row lights once its node passes this line
+    let tick = false;
+
+    function paint(){
+      const box  = tree.getBoundingClientRect();
+      const mark = innerHeight * LINE;
+      let h = mark - box.top;
+      h = Math.max(0, Math.min(h, box.height));
+      if(fill) fill.style.height = h.toFixed(1) + 'px';
+      rows.forEach(r=>{
+        const n = r.getBoundingClientRect();
+        if(n.top + n.height/2 <= mark) r.classList.add('lit');
+      });
+    }
+
+    addEventListener('scroll', ()=>{
+      if(tick) return; tick = true;
+      requestAnimationFrame(()=>{ paint(); tick = false; });
+    }, {passive:true});
+    addEventListener('resize', paint, {passive:true});
+    paint();
   })();
 
   /* ---- magnetic buttons ---- */
-  document.querySelectorAll('.mag').forEach(b=>{
-    let raf, tx=0, ty=0, cx=0, cy=0, active=false;
-    function loop(){
-      cx += (tx-cx)*.18; cy += (ty-cy)*.18;
-      b.style.transform = `translate(${cx.toFixed(2)}px,${cy.toFixed(2)}px)`;
-      if(active || Math.abs(cx)>.1 || Math.abs(cy)>.1) raf = requestAnimationFrame(loop);
-      else b.style.transform = '';
-    }
-    b.addEventListener('mousemove', e=>{
-      const r = b.getBoundingClientRect();
-      tx = (e.clientX-r.left-r.width/2)*.22; ty = (e.clientY-r.top-r.height/2)*.34;
-      if(!active){ active = true; cancelAnimationFrame(raf); raf = requestAnimationFrame(loop); }
-    });
-    b.addEventListener('mouseleave', ()=>{ active=false; tx=0; ty=0; });
-  });
-
-  /* ---- spotlight + subtle tilt on cards ---- */
-  document.querySelectorAll('.bcard,.xcard,.reason,.pstep,.srow-vis,.card,.dv,.eg').forEach(c=>{
-    c.addEventListener('mousemove', e=>{
-      const r = c.getBoundingClientRect();
-      const px = (e.clientX-r.left)/r.width, py = (e.clientY-r.top)/r.height;
-      c.style.setProperty('--mx', (px*100)+'%');
-      c.style.setProperty('--my', (py*100)+'%');
-      c.style.transform = `perspective(1000px) rotateX(${((py-.5)*-3).toFixed(2)}deg) rotateY(${((px-.5)*4).toFixed(2)}deg) translateY(-5px)`;
-    });
-    c.addEventListener('mouseleave', ()=>{ c.style.transform=''; });
-  });
-
-
-  /* ---- services spotlight grid ---- */
-  (function spotlightGrid(){
-    const slab = document.getElementById('sgSlab');
-    if(!slab) return;
-    const glow  = slab.querySelector('.sg-glow');
-    const tiles = [...slab.querySelectorAll('.sg-tile')];
-    tiles.forEach((t,i)=>t.style.setProperty('--d', i));
-
-    // staggered entry once the slab scrolls in
-    new IntersectionObserver((es,ob)=>{
-      es.forEach(e=>{ if(e.isIntersecting){ slab.classList.add('in'); ob.unobserve(e.target); } });
-    }, {threshold:.15}).observe(slab);
-
-    if(reduce) return;
-
-    const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
-
-    if(fine){
-      // glow eases toward the cursor instead of snapping to it
-      let tx=0, ty=0, cx=0, cy=0, on=false, raf=0, idle=0, t0=performance.now();
-      slab.addEventListener('mousemove', e=>{
-        const r = slab.getBoundingClientRect();
-        tx = e.clientX - r.left; ty = e.clientY - r.top;
-        if(!on){ cx = tx; cy = ty; on = true; slab.classList.add('lit'); }
-        idle = 0;
-        if(!raf) raf = requestAnimationFrame(loop);
+  if(!reduce){
+    document.querySelectorAll('.mag').forEach(el=>{
+      let raf = 0, cx = 0, cy = 0, tx = 0, ty = 0, on = false;
+      el.addEventListener('mousemove', e=>{
+        const r = el.getBoundingClientRect();
+        tx = (e.clientX - (r.left + r.width/2))  * .22;
+        ty = (e.clientY - (r.top  + r.height/2)) * .28;
+        on = true; if(!raf) raf = requestAnimationFrame(loop);
       }, {passive:true});
-      slab.addEventListener('mouseleave', ()=>{ on = false; slab.classList.remove('lit'); });
-
-      function loop(now){
-        cx += (tx-cx)*.12; cy += (ty-cy)*.12;
-        // gentle drift so it never sits perfectly still
-        idle += 1;
-        const drift = idle > 90 ? Math.sin((now-t0)/900)*9 : 0;
-        glow.style.left = (cx + drift) + 'px';
-        glow.style.top  = (cy + Math.cos((now-t0)/1100)*(idle>90?7:0)) + 'px';
-        raf = on || Math.abs(tx-cx) > .5 ? requestAnimationFrame(loop) : 0;
+      el.addEventListener('mouseleave', ()=>{ tx = 0; ty = 0; on = false; if(!raf) raf = requestAnimationFrame(loop); });
+      function loop(){
+        cx += (tx - cx) * .16; cy += (ty - cy) * .16;
+        el.style.transform = `translate(${cx.toFixed(2)}px,${cy.toFixed(2)}px)`;
+        raf = (on || Math.abs(cx) > .1 || Math.abs(cy) > .1) ? requestAnimationFrame(loop) : 0;
       }
-    } else {
-      // touch: whichever tile is nearest the middle of the screen lights up
-      const pick = ()=>{
-        const mid = innerHeight/2;
-        let best = null, bd = 1e9;
-        tiles.forEach(t=>{
-          const r = t.getBoundingClientRect();
-          if(r.bottom < 0 || r.top > innerHeight) return;
-          const d = Math.abs(r.top + r.height/2 - mid);
-          if(d < bd){ bd = d; best = t; }
-        });
-        tiles.forEach(t=>t.classList.toggle('near', t === best));
-      };
-      let tick = false;
-      addEventListener('scroll', ()=>{
-        if(tick) return; tick = true;
-        requestAnimationFrame(()=>{ pick(); tick = false; });
+    });
+  }
+
+  /* ---- cursor spotlight on cards ---- */
+  if(!reduce){
+    document.querySelectorAll('.ss-card,.card,.xcard,.svc').forEach(el=>{
+      el.addEventListener('mousemove', e=>{
+        const r = el.getBoundingClientRect();
+        el.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+        el.style.setProperty('--my', (e.clientY - r.top)  + 'px');
       }, {passive:true});
-      pick();
-    }
-  })();
+    });
+  }
+
+  /* ---- annotated product stages ---- */
+  document.querySelectorAll('[data-anno]').forEach(stage=>{
+    new IntersectionObserver((es,ob)=>{
+      es.forEach(e=>{ if(e.isIntersecting){ stage.classList.add('in'); ob.unobserve(e.target); } });
+    }, {threshold:.2}).observe(stage);
+  });
 
   /* ---- orbs drift with cursor ---- */
   const orbs = [...document.querySelectorAll('.orb')];

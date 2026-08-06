@@ -1,8 +1,13 @@
 {
   "name": "hephoratech-website",
-  "compatibility_date": "2024-09-01",
+  "main": "worker/index.js",
+  "compatibility_date": "2024-09-23",
   "assets": {
     "directory": "./hephoratech-website",
+    "binding": "ASSETS",
     "not_found_handling": "404-page"
+  },
+  "observability": {
+    "enabled": true
   }
 }
