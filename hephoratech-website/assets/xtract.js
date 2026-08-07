@@ -283,7 +283,7 @@
         const body = [...data.entries()]
           .filter(([k])=>!['access_key','subject','from_name','botcheck'].includes(k))
           .map(([k,v])=>k + ': ' + v).join('\n');
-        location.href = 'mailto:Aswath@hephoratech.com?subject=' +
+        location.href = 'mailto:info@hephoratech.com?subject=' +
           encodeURIComponent('New enquiry from the website') + '&body=' + encodeURIComponent(body);
         say('ok','Opening your email app so you can send this to us…');
         return;
@@ -302,10 +302,10 @@
             if(lbl) lbl.textContent = s.options[0].textContent;
           });
         } else {
-          say('err', out.message || 'Something went wrong. Please email Aswath@hephoratech.com directly.');
+          say('err', out.message || 'Something went wrong. Please email info@hephoratech.com directly.');
         }
       }catch(err){
-        say('err','Could not send right now. Please email Aswath@hephoratech.com directly.');
+        say('err','Could not send right now. Please email info@hephoratech.com directly.');
       }finally{
         if(label) label.textContent = original;
         if(btn) btn.disabled = false;
@@ -517,12 +517,12 @@
           bubble('bot', data.reply);
         }else{
           bubble('bot', data.error && data.error.indexOf('not configured') > -1
-            ? "The agent isn't switched on yet. In the meantime, email Aswath@hephoratech.com or call +91 99942 29860 and we'll reply personally."
+            ? "The agent isn't switched on yet. In the meantime, email info@hephoratech.com or call +91 99942 29860 and we'll reply personally."
             : "Sorry — I couldn't reach the agent just then. Please try again in a moment.");
         }
       }catch(err){
         t.remove();
-        bubble('bot', "Something went wrong reaching the agent. Please try again, or email Aswath@hephoratech.com.");
+        bubble('bot', "Something went wrong reaching the agent. Please try again, or email info@hephoratech.com.");
       }finally{
         busy = false; input.disabled = false; input.focus();
       }

@@ -14,7 +14,7 @@ import os, re, glob, shutil, datetime
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://hephoratech.com"
-EMAIL = "Aswath@hephoratech.com"
+EMAIL = "info@hephoratech.com"
 PHONE = "+91 99942 29860"
 TEL = "+919994229860"
 UPDATED = datetime.date.today().strftime("%d %B %Y")
