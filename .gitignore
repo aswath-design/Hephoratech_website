@@ -20,3 +20,6 @@ _ref2/
 
 # v2 rebuild — local only, not deployed
 hephoratech-v2/
+
+# pre-optimisation image originals (local only)
+*.orig

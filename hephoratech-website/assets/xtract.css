@@ -2010,12 +2010,12 @@ section.alt + .pshow{padding-top:56px}
 .sbento{display:grid;grid-template-columns:repeat(6,1fr);gap:18px;margin-top:6px}
 .sb-card{
   position:relative;display:flex;flex-direction:column;justify-content:flex-end;
-  min-height:320px;padding:28px;border-radius:22px;overflow:hidden;isolation:isolate;
+  min-height:282px;padding:28px;border-radius:22px;overflow:hidden;isolation:isolate;
   background:#0B0F1A;border:1px solid var(--line);
   box-shadow:0 26px 60px -34px rgba(0,0,0,.85);
   transition:transform .7s var(--ease),box-shadow .6s var(--ease),border-color .45s;
 }
-.sb-card.wide{min-height:352px}
+.sb-card.wide{min-height:312px}
 .sb-card:hover{transform:translateY(-7px);border-color:rgba(30,95,255,.4);
   box-shadow:0 44px 90px -40px rgba(0,0,0,.95),0 0 34px rgba(30,95,255,.14)}
 .sb-art{
@@ -2043,11 +2043,10 @@ section.alt + .pshow{padding-top:56px}
   display:block;font-size:.7rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
   color:var(--pur-3);margin-bottom:8px;
 }
-.sb-card h3{color:#fff;font-size:1.32rem;letter-spacing:-.02em;line-height:1.16;margin:0 0 9px}
-.sb-card.wide h3{font-size:1.55rem}
-.sb-card p{color:rgba(255,255,255,.68);font-size:.92rem;line-height:1.58;margin:0;max-width:46ch}
+.sb-card h3{color:#fff;font-size:1.36rem;letter-spacing:-.02em;line-height:1.16;margin:0}
+.sb-card.wide h3{font-size:1.62rem}
 .sb-foot{display:flex;align-items:center;justify-content:space-between;gap:14px;
-  flex-wrap:wrap;margin-top:18px}
+  flex-wrap:wrap;margin-top:20px}
 .sb-tags{display:flex;gap:7px;flex-wrap:wrap}
 .sb-tags span{
   font-size:.68rem;font-weight:600;letter-spacing:.03em;color:rgba(255,255,255,.72);
@@ -2070,4 +2069,83 @@ html[data-theme="light"] .sb-card:hover{box-shadow:0 44px 90px -42px rgba(15,35,
   .sbento{grid-template-columns:1fr;gap:16px}
   .sb-card{padding:24px;min-height:280px}
   .sb-card h3,.sb-card.wide h3{font-size:1.28rem}
+}
+
+/* ═══ PRODUCTS SPLIT (v2 layout) ═══ */
+.p2wrap{display:flex;flex-direction:column;gap:64px;margin-top:8px}
+.p2row{display:grid;grid-template-columns:1fr 1.05fr;gap:52px;align-items:center}
+.p2row.flip .p2-txt{order:2}
+.p2-top{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.p2-ico{
+  width:46px;height:46px;border-radius:13px;flex-shrink:0;display:grid;place-items:center;
+  background:var(--pur-soft);border:1px solid rgba(30,95,255,.28);
+}
+.p2-ico svg{width:21px;height:21px;fill:none;stroke:var(--pur-2);stroke-width:1.9;
+  stroke-linecap:round;stroke-linejoin:round}
+.p2-chip{
+  font-size:.68rem;font-weight:700;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--pur-3);padding:6px 13px;border-radius:100px;
+  background:var(--pur-soft);border:1px solid rgba(30,95,255,.3);
+}
+.p2-chip.is-live{color:#4ade80;background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.32)}
+.p2-txt h3{font-size:clamp(1.5rem,2.7vw,2.15rem);letter-spacing:-.028em;line-height:1.1;
+  color:var(--text);margin:0 0 14px}
+.p2-txt p{color:var(--muted);font-size:.97rem;line-height:1.68;margin:0;max-width:52ch}
+.p2-tags{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0 26px}
+.p2-tags span{
+  font-size:.72rem;font-weight:600;color:var(--muted);padding:7px 13px;border-radius:100px;
+  background:var(--w04);border:1px solid var(--line);
+}
+.p2-art{
+  position:relative;border-radius:24px;overflow:hidden;border:1px solid var(--line);
+  background:#0d1424;box-shadow:0 30px 70px -36px rgba(0,0,0,.8);
+  transition:transform .8s var(--ease),box-shadow .6s var(--ease),background .4s;
+}
+.p2-art:hover{transform:translateY(-6px);box-shadow:0 46px 90px -40px rgba(0,0,0,.9),0 0 34px rgba(30,95,255,.14)}
+.p2-art img{width:100%;height:auto;display:block;transition:transform 1.4s var(--ease)}
+.p2-art:hover img{transform:scale(1.035)}
+/* dark is the default theme — swap the artwork with it */
+.p2-art .art-light{display:none}
+.p2-art .art-dark{display:block}
+html[data-theme="light"] .p2-art{background:#eef3ff}
+html[data-theme="light"] .p2-art .art-light{display:block}
+html[data-theme="light"] .p2-art .art-dark{display:none}
+.p2-n{
+  position:absolute;top:16px;left:20px;z-index:2;font-family:var(--head);
+  font-size:.76rem;font-weight:800;letter-spacing:.14em;color:rgba(255,255,255,.3);
+}
+html[data-theme="light"] .p2-n{color:rgba(13,19,34,.32)}
+.p2-btn{align-self:flex-start}
+html[data-theme="light"] .p2-art{box-shadow:0 30px 70px -40px rgba(15,35,80,.45)}
+html[data-theme="light"] .p2-tags span{background:rgba(15,35,80,.04)}
+@media(max-width:900px){
+  .p2wrap{gap:44px}
+  .p2row{grid-template-columns:1fr;gap:26px}
+  .p2row.flip .p2-txt{order:0}
+  .p2-txt p{max-width:none}
+}
+
+/* ═══ PERF PASS ═══ */
+/* Smaller blur radius — gaussian blur cost scales with radius, and at this
+   size 60px is visually indistinguishable from 90px. */
+.orb{filter:blur(60px);will-change:translate}
+.orb-1{width:520px;height:400px}
+.orb-2{width:430px;height:320px}
+
+/* Skip rendering work for sections that are off-screen. `auto` in
+   contain-intrinsic-size makes the browser remember each section's real height
+   after first paint, so the scrollbar doesn't jump around. */
+#services,#products,#process,footer{content-visibility:auto;contain-intrinsic-size:auto 900px}
+
+/* Card artwork is decorative and clipped — contain its paint so a hover
+   repaint can't invalidate the rest of the page. */
+.sb-card,.p2-art{contain:paint}
+.sb-art{will-change:transform}
+
+/* The nav is the only backdrop-filter that stays on screen while scrolling;
+   promote it so it isn't re-rasterised each frame. */
+.nav-in{will-change:max-width,padding}
+
+@media (prefers-reduced-motion:reduce){
+  .orb-1,.orb-2{animation:none!important}
 }

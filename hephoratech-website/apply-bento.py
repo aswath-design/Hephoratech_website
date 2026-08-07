@@ -58,7 +58,6 @@ def build_html():
           <div class="sb-ico">{s['ico']}</div>
           <span class="sb-label">{s['label']}</span>
           <h3>{s['h3']}</h3>
-          <p>{s['p']}</p>
           <div class="sb-foot">
             <div class="sb-tags">{tags}</div>
             <span class="sb-go">Explore <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
@@ -73,12 +72,12 @@ CSS_BLOCK = MARK + '''
 .sbento{display:grid;grid-template-columns:repeat(6,1fr);gap:18px;margin-top:6px}
 .sb-card{
   position:relative;display:flex;flex-direction:column;justify-content:flex-end;
-  min-height:320px;padding:28px;border-radius:22px;overflow:hidden;isolation:isolate;
+  min-height:282px;padding:28px;border-radius:22px;overflow:hidden;isolation:isolate;
   background:#0B0F1A;border:1px solid var(--line);
   box-shadow:0 26px 60px -34px rgba(0,0,0,.85);
   transition:transform .7s var(--ease),box-shadow .6s var(--ease),border-color .45s;
 }
-.sb-card.wide{min-height:352px}
+.sb-card.wide{min-height:312px}
 .sb-card:hover{transform:translateY(-7px);border-color:rgba(30,95,255,.4);
   box-shadow:0 44px 90px -40px rgba(0,0,0,.95),0 0 34px rgba(30,95,255,.14)}
 .sb-art{
@@ -106,11 +105,10 @@ CSS_BLOCK = MARK + '''
   display:block;font-size:.7rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
   color:var(--pur-3);margin-bottom:8px;
 }
-.sb-card h3{color:#fff;font-size:1.32rem;letter-spacing:-.02em;line-height:1.16;margin:0 0 9px}
-.sb-card.wide h3{font-size:1.55rem}
-.sb-card p{color:rgba(255,255,255,.68);font-size:.92rem;line-height:1.58;margin:0;max-width:46ch}
+.sb-card h3{color:#fff;font-size:1.36rem;letter-spacing:-.02em;line-height:1.16;margin:0}
+.sb-card.wide h3{font-size:1.62rem}
 .sb-foot{display:flex;align-items:center;justify-content:space-between;gap:14px;
-  flex-wrap:wrap;margin-top:18px}
+  flex-wrap:wrap;margin-top:20px}
 .sb-tags{display:flex;gap:7px;flex-wrap:wrap}
 .sb-tags span{
   font-size:.68rem;font-weight:600;letter-spacing:.03em;color:rgba(255,255,255,.72);

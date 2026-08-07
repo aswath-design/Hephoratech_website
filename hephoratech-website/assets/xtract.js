@@ -52,19 +52,35 @@
   /* ---- damped parallax (eased toward target every frame) ---- */
   if(!reduce && pars.length){
     const state = pars.map(()=>({cur:0, tgt:0}));
-    (function par(){
+    const amt = pars.map(el => parseFloat(el.dataset.par || .05));
+    let parRaf = 0, parIdle = 0;
+    // Read ALL rects first, then write ALL transforms. Interleaving read/write
+    // in one loop forced a synchronous layout per element, per frame.
+    const par = () => {
+      const vh = innerHeight, rects = [];
+      for(let i=0;i<pars.length;i++) rects.push(pars[i].getBoundingClientRect());
+      let moving = false;
       for(let i=0;i<pars.length;i++){
-        const el = pars[i], st = state[i];
-        const r = el.getBoundingClientRect();
-        if(r.bottom > -240 && r.top < innerHeight + 240){
-          st.tgt = -(r.top + r.height/2 - innerHeight/2) * parseFloat(el.dataset.par || .05);
+        const st = state[i], r = rects[i];
+        if(r.bottom > -240 && r.top < vh + 240)
+          st.tgt = -(r.top + r.height/2 - vh/2) * amt[i];
+        st.cur += (st.tgt - st.cur) * .08;
+        if(Math.abs(st.tgt - st.cur) > .05){
+          pars[i].style.transform = `translate3d(0,${st.cur.toFixed(2)}px,0)`;
+          moving = true;
         }
-        st.cur += (st.tgt - st.cur) * .08;          // damping
-        if(Math.abs(st.tgt - st.cur) > .05)
-          el.style.transform = `translate3d(0,${st.cur.toFixed(2)}px,0)`;
       }
-      requestAnimationFrame(par);
-    })();
+      // idle for ~half a second with nothing moving → stop until the next scroll
+      parIdle = moving ? 0 : parIdle + 1;
+      parRaf = (parIdle > 30 || document.hidden) ? 0 : requestAnimationFrame(par);
+    };
+    const kickPar = () => { parIdle = 0; if(!parRaf && !document.hidden) parRaf = requestAnimationFrame(par); };
+    addEventListener('scroll', kickPar, {passive:true});
+    addEventListener('resize', kickPar, {passive:true});
+    addEventListener('visibilitychange', ()=>{
+      if(document.hidden){ if(parRaf){ cancelAnimationFrame(parRaf); parRaf = 0; } } else kickPar();
+    });
+    kickPar();
   }
 
   /* ---- hero headline: wrap words for stagger ---- */
@@ -304,10 +320,13 @@
     const cv = document.createElement('canvas'); host.appendChild(cv);
     const ctx = cv.getContext('2d');
     let w, h, stars = [];
+    // cap DPR: at 2x on a 1080p screen the old canvas was ~7.2M pixels,
+    // cleared and repainted every frame
+    const DPR = Math.min(devicePixelRatio || 1, 1.5);
     function resize(){
-      w = cv.width = innerWidth * devicePixelRatio;
-      h = cv.height = (host.offsetHeight || 940) * devicePixelRatio;
-      const n = Math.min(190, Math.floor(w*h/24000/devicePixelRatio));
+      w = cv.width = innerWidth * DPR;
+      h = cv.height = (host.offsetHeight || 940) * DPR;
+      const n = Math.min(120, Math.floor(w*h/26000/DPR));
       stars = Array.from({length:n}, ()=>({
         x:Math.random()*w, y:Math.random()*h,
         r:(Math.random()*1.3+.3)*devicePixelRatio,
@@ -324,6 +343,7 @@
     syncStarColor();
     addEventListener('themechange', syncStarColor);
 
+    let starRaf = 0, onScreen = true;
     function draw(){
       ctx.clearRect(0,0,w,h);
       for(const st of stars){
@@ -331,9 +351,21 @@
         ctx.beginPath(); ctx.arc(st.x, st.y, st.r, 0, 7);
         ctx.fillStyle = `rgba(${starRGB},${al})`; ctx.fill();
       }
-      requestAnimationFrame(draw);
+      starRaf = requestAnimationFrame(draw);
     }
-    resize(); draw();
+    const startStars = () => {
+      if(!starRaf && onScreen && !document.hidden
+         && !matchMedia('(prefers-reduced-motion: reduce)').matches)
+        starRaf = requestAnimationFrame(draw);
+    };
+    const stopStars = () => { if(starRaf){ cancelAnimationFrame(starRaf); starRaf = 0; } };
+    // don't paint a canvas nobody can see
+    new IntersectionObserver(es => {
+      onScreen = es[0].isIntersecting;
+      onScreen ? startStars() : stopStars();
+    }, {threshold:0}).observe(host);
+    addEventListener('visibilitychange', ()=> document.hidden ? stopStars() : startStars());
+    resize(); startStars();
     addEventListener('resize', resize, {passive:true});
   }
 
@@ -597,20 +629,29 @@
 
   /* ---- orbs drift with cursor ---- */
   const orbs = [...document.querySelectorAll('.orb')];
-  if(orbs.length){
-    let ox=0, oy=0, txo=0, tyo=0;
+  const noMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(orbs.length && !noMotion && matchMedia('(hover:hover)').matches){
+    let ox=0, oy=0, txo=0, tyo=0, orbRaf=0;
+    // `translate` is its own property: compositor-only, and it does NOT fight
+    // the keyframes' `transform`. Writing margin here used to force a layout
+    // + a 90px blur repaint on every single frame.
+    const drift = () => {
+      ox += (txo-ox)*.06; oy += (tyo-oy)*.06;
+      for(let i=0;i<orbs.length;i++){
+        const k = (i+1)*16;
+        orbs[i].style.translate = (ox*k).toFixed(1)+'px '+(oy*k).toFixed(1)+'px';
+      }
+      // stop once it has settled — no idle rAF burning frames
+      orbRaf = (Math.abs(txo-ox) > .001 || Math.abs(tyo-oy) > .001)
+        ? requestAnimationFrame(drift) : 0;
+    };
     addEventListener('mousemove', e=>{
       txo = (e.clientX/innerWidth - .5); tyo = (e.clientY/innerHeight - .5);
+      if(!orbRaf && !document.hidden) orbRaf = requestAnimationFrame(drift);
     }, {passive:true});
-    (function drift(){
-      ox += (txo-ox)*.04; oy += (tyo-oy)*.04;
-      orbs.forEach((o,i)=>{
-        const k = (i+1)*16;
-        o.style.marginLeft = (ox*k).toFixed(1)+'px';
-        o.style.marginTop  = (oy*k).toFixed(1)+'px';
-      });
-      requestAnimationFrame(drift);
-    })();
+    addEventListener('visibilitychange', ()=>{
+      if(document.hidden && orbRaf){ cancelAnimationFrame(orbRaf); orbRaf = 0; }
+    });
   }
 
   /* ---- theme toggle: dark <-> light, remembered across visits ---- */
