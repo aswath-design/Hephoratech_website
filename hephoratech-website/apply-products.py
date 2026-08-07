@@ -9,6 +9,19 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 IDX = os.path.join(HERE, "index.html")
 CSS = os.path.join(HERE, "assets", "xtract.css")
 MARK = "/* ═══ PRODUCTS SPLIT (v2 layout) ═══ */"
+ENDMARK = "/* ═══ END PRODUCTS SPLIT ═══ */"
+
+
+def replace_block(css, mark, endmark, block):
+    """Swap out only this script's own block, preserving anything after it.
+    (Truncating at the marker used to delete every later block.)"""
+    i = css.find(mark)
+    if i == -1:
+        return css.rstrip() + "\n\n" + block
+    j = css.find(endmark, i)
+    if j == -1:                                   # legacy block, ran to EOF
+        return css[:i].rstrip() + "\n\n" + block
+    return css[:i].rstrip() + "\n\n" + block + css[j + len(endmark):]
 
 PRODUCTS = [
     dict(
@@ -131,13 +144,9 @@ def main():
         print("index.html: products sticky → v2 split rows  (backup at index.html.products.bak)")
 
     css = open(CSS, encoding="utf-8").read()
-    if MARK in css:
-        css = css[:css.find(MARK)].rstrip() + "\n\n"
-        print("assets/xtract.css: refreshed existing products CSS")
-    else:
-        css = css.rstrip() + "\n\n"
-        print("assets/xtract.css: products CSS appended")
-    open(CSS, "w", encoding="utf-8").write(css + CSS_BLOCK)
+    open(CSS, "w", encoding="utf-8").write(
+        replace_block(css, MARK, ENDMARK, CSS_BLOCK + ENDMARK + "\n"))
+    print("assets/xtract.css: products CSS written (later blocks preserved)")
 
 
 if __name__ == "__main__":

@@ -2,6 +2,12 @@
    HephoraTech — Xtract-style homepage behaviour
    ═══════════════════════════════════════════════ */
 (function(){
+  // Chrome restores the last scroll position on reload and, because of
+  // `scroll-behavior:smooth`, animates the glide there instead of jumping —
+  // which reads as "the page scrolling down on its own" on every reopen.
+  // Always start at the top instead.
+  if('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* ---- page transitions ---- */
@@ -365,6 +371,11 @@
       onScreen ? startStars() : stopStars();
     }, {threshold:0}).observe(host);
     addEventListener('visibilitychange', ()=> document.hidden ? stopStars() : startStars());
+    // A View Transition rasterises the whole viewport twice. A canvas that
+    // keeps repainting during that invalidates the snapshot every frame, which
+    // is most of the theme-switch stutter — so hold still while it sweeps.
+    addEventListener('ht:freeze', stopStars);
+    addEventListener('ht:thaw', startStars);
     resize(); startStars();
     addEventListener('resize', resize, {passive:true});
   }
@@ -680,13 +691,18 @@
     /* The new theme washes over the page as a circle growing out of the
        icon. Needs View Transitions; anything else gets the crossfade. */
     function apply(mode, animate, origin){
-      const canWave = animate && !reduce && document.startViewTransition && origin;
+      // The wave snapshots the whole viewport twice. This page is expensive to
+      // rasterise (two live canvases, backdrop-filters, big blurs), so on a
+      // weak device or a phone the sweep costs more than it's worth — those
+      // get the cheap crossfade instead.
+      const weak = (navigator.hardwareConcurrency || 8) <= 4 || innerWidth < 760;
+      const canWave = animate && !reduce && !weak && document.startViewTransition && origin;
 
       if(!canWave){
         if(animate){
           root.classList.add('theming');
           clearTimeout(apply._t);
-          apply._t = setTimeout(()=>root.classList.remove('theming'), 700);
+          apply._t = setTimeout(()=>root.classList.remove('theming'), 420);
         }
         swap(mode);
         return;
@@ -699,20 +715,23 @@
       );
 
       root.classList.add('wave');
+      dispatchEvent(new CustomEvent('ht:freeze'));      // still canvases = clean snapshot
       const vt = document.startViewTransition(()=>swap(mode));
 
       vt.ready.then(()=>{
         root.animate(
           { clipPath:[`circle(0px at ${origin.x}px ${origin.y}px)`,
                       `circle(${far}px at ${origin.x}px ${origin.y}px)`] },
-          { duration:820, easing:'cubic-bezier(.22,.68,.24,1)',
+          { duration:560, easing:'cubic-bezier(.22,.61,.24,1)',
             pseudoElement:'::view-transition-new(root)' }
         );
       }).catch(()=>{});
 
-      vt.finished.then(()=>root.classList.remove('wave')).catch(()=>{
+      const done = ()=>{
         root.classList.remove('wave');
-      });
+        dispatchEvent(new CustomEvent('ht:thaw'));
+      };
+      vt.finished.then(done).catch(done);
     }
 
     function current(){
@@ -748,4 +767,37 @@
     });
   })();
 
+
+  /* ---- hero magic rings background ---- */
+  (function(){
+    var host = document.getElementById('heroRings');
+    if(!host) return;
+    function init(){
+      if(!window.HephoraMagicRings){
+        console.warn('[hero] magic-rings.js did not load — hero background skipped');
+        return;
+      }
+      window.HephoraMagicRings(host, {
+      color:        '#1E5FFF',   // brand blue — inner rings
+      colorTwo:     '#8FB4FF',   // pale blue  — outer rings
+      ringCount:    6,
+      speed:        0.85,
+      attenuation:  11,
+      lineThickness:2,
+      baseRadius:   0.28,
+      radiusStep:   0.10,
+      scaleRate:    0.09,
+      opacity:      1,
+      noiseAmount:  0.08,
+      rotation:     0,
+      ringGap:      1.5,
+      followMouse:  true,
+      mouseInfluence: 0.12,
+      hoverScale:   1.06,
+        parallax:     0.03
+      });
+    }
+    // run now if the library is already there, otherwise wait for load
+    if(window.HephoraMagicRings) init(); else addEventListener('load', init);
+  })();
 })();

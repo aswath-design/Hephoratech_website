@@ -8,7 +8,27 @@ import os, re, shutil, json
 HERE = os.path.dirname(os.path.abspath(__file__))
 IDX = os.path.join(HERE, "index.html")
 CSS = os.path.join(HERE, "assets", "xtract.css")
+JS = os.path.join(HERE, "assets", "xtract.js")
 MARK = "/* ═══ SERVICES BENTO (v2 layout) ═══ */"
+ENDMARK = "/* ═══ END SERVICES BENTO ═══ */"
+ANIM_JS_MARK = "/* ---- service card lottie panels ---- */"
+
+
+def replace_block(css, mark, endmark, block):
+    """Swap out only this script's own block.
+
+    The old code did `css[:css.find(mark)]`, which truncated the stylesheet at
+    the marker — silently deleting every block appended *after* it (products,
+    perf, legal, hero rings). That's how the hero lost `position:absolute` and
+    its canvas started growing without bound.
+    """
+    i = css.find(mark)
+    if i == -1:                                   # first run — append
+        return css.rstrip() + "\n\n" + block
+    j = css.find(endmark, i)
+    if j == -1:                                   # legacy block, ran to EOF
+        return css[:i].rstrip() + "\n\n" + block
+    return css[:i].rstrip() + "\n\n" + block + css[j + len(endmark):]
 
 SERVICES = [
     dict(n="01", label="Web &amp; App Development", h3="Build fast, scalable products",
@@ -50,9 +70,15 @@ def build_html():
         wide = " wide" if s["span"] >= 4 else ""
         tags = "".join(f"<span>{t}</span>" for t in s["tags"])
         delay = f" rv-d{min(i,5)}" if i else ""   # v1 defines rv-d1 … rv-d5
+        # An animated SVG has to be a real element, not a background-image —
+        # browsers run SMIL reliably in <img>, less so in background-image.
+        if s["img"].endswith(".svg"):
+            art = f'<img class="sb-art" src="{s["img"]}" alt="" aria-hidden="true" loading="lazy">'
+        else:
+            art = f'<span class="sb-art" style="background-image:url({s["img"]})" aria-hidden="true"></span>'
         cards += f'''
       <a href="{s['href']}" class="sb-card{wide} rv rv-scale{delay}" style="grid-column:span {s['span']}">
-        <span class="sb-art" style="background-image:url({s['img']})" aria-hidden="true"></span>
+        {art}
         <span class="sb-num">{s['n']}</span>
         <div class="sb-body">
           <div class="sb-ico">{s['ico']}</div>
@@ -85,6 +111,9 @@ CSS_BLOCK = MARK + '''
   opacity:.66;transition:transform 1.5s var(--ease),opacity .6s var(--ease);
 }
 .sb-card:hover .sb-art{transform:scale(1.07);opacity:.8}
+/* the SVG variant is an <img>, so it needs object-fit to behave like the
+   background-image photos do — same box, same crop, card size unchanged */
+img.sb-art{width:100%;height:100%;object-fit:cover;object-position:center}
 .sb-card::after{
   content:'';position:absolute;inset:0;z-index:-1;
   background:linear-gradient(180deg,rgba(4,6,13,.12) 0%,rgba(4,6,13,.72) 50%,rgba(4,6,13,.96) 100%);
@@ -127,23 +156,55 @@ html[data-theme="light"] .sb-card:hover{box-shadow:0 44px 90px -42px rgba(15,35,
   .sbento{grid-template-columns:repeat(2,1fr)}
   .sb-card,.sb-card.wide{grid-column:span 1!important;min-height:300px}
 }
+/* ═══ SERVICE CARD MOTION ═══ */
+/* The artwork drifts very slowly so the cards feel alive at rest. `scale` and
+   `translate` are separate properties from `transform`, so the idle drift and
+   the hover scale compose instead of fighting each other. */
+.sb-art{
+  animation:sbDrift 34s ease-in-out infinite alternate;
+  will-change:scale,translate;
+}
+@keyframes sbDrift{
+  from{scale:1.02;translate:0 0}
+  to{scale:1.13;translate:-2.5% -2%}
+}
+/* different durations + directions so the six never move in lockstep */
+.sb-card:nth-child(2) .sb-art{animation-duration:29s;animation-direction:alternate-reverse}
+.sb-card:nth-child(3) .sb-art{animation-duration:41s}
+.sb-card:nth-child(4) .sb-art{animation-duration:36s;animation-direction:alternate-reverse}
+.sb-card:nth-child(5) .sb-art{animation-duration:31s}
+.sb-card:nth-child(6) .sb-art{animation-duration:44s;animation-direction:alternate-reverse}
+
+/* a light sweep that crosses the card on hover */
+.sb-card::before{
+  content:'';position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(105deg,transparent 38%,rgba(140,180,255,.13) 48%,
+             rgba(190,215,255,.2) 52%,rgba(140,180,255,.13) 56%,transparent 66%);
+  transform:translateX(-130%);
+  transition:transform 1.1s cubic-bezier(.22,1,.36,1);
+}
+.sb-card:hover::before{transform:translateX(130%)}
+
+/* the artwork brightens and the blue lifts as you hover */
+.sb-card:hover .sb-art{opacity:.9;filter:saturate(1.15) brightness(1.06)}
+.sb-art{filter:saturate(1) brightness(1);transition:transform 1.5s var(--ease),opacity .6s var(--ease),filter .6s var(--ease)}
+
+@media (prefers-reduced-motion:reduce){
+  .sb-art{animation:none}
+  .sb-card::before{display:none}
+}
 @media(max-width:640px){
   .sbento{grid-template-columns:1fr;gap:16px}
   .sb-card{padding:24px;min-height:280px}
   .sb-card h3,.sb-card.wide h3{font-size:1.28rem}
 }
-'''
+''' + ENDMARK + "\n"
 
 
 def main():
     src = open(IDX, encoding="utf-8").read()
     start = src.find('<div class="tree" id="svcTree">')
-    if start == -1:
-        if 'class="sbento"' in src:
-            print("index.html already converted — skipping HTML step.")
-        else:
-            raise SystemExit("Could not find the services tree in index.html")
-    else:
+    if start != -1:
         endmark = '\n    </div>\n  </div>\n</section>'
         end = src.find(endmark, start)
         if end == -1:
@@ -152,16 +213,36 @@ def main():
         src = src[:start] + build_html() + src[end + len('\n    </div>'):]
         open(IDX, "w", encoding="utf-8").write(src)
         print("index.html: tree → bento  (backup at index.html.bak)")
+    else:
+        # already converted at least once — regenerate the card markup in
+        # place so re-running picks up SERVICES changes (e.g. a new `anim`)
+        start = src.find('<div class="sbento">')
+        if start == -1:
+            raise SystemExit("Could not find the services tree or the bento grid in index.html")
+        endmark = '\n    </div>\n  </div>\n</section>'
+        end = src.find(endmark, start)
+        if end == -1:
+            raise SystemExit("Could not find the end of the bento grid")
+        if not os.path.exists(IDX + ".bak"):
+            shutil.copy(IDX, IDX + ".bak")
+        src = src[:start] + build_html() + src[end + len('\n    </div>'):]
+        open(IDX, "w", encoding="utf-8").write(src)
+        print("index.html: bento cards regenerated")
 
     css = open(CSS, encoding="utf-8").read()
-    if MARK in css:
-        css = css[:css.find(MARK)].rstrip() + "\n\n"
-        print("assets/xtract.css: refreshed existing bento CSS")
-    else:
+    if MARK not in css and not os.path.exists(CSS + ".bak"):
         shutil.copy(CSS, CSS + ".bak")
-        css = css.rstrip() + "\n\n"
-        print("assets/xtract.css: bento CSS appended  (backup at xtract.css.bak)")
-    open(CSS, "w", encoding="utf-8").write(css + CSS_BLOCK)
+    open(CSS, "w", encoding="utf-8").write(replace_block(css, MARK, ENDMARK, CSS_BLOCK))
+    print("assets/xtract.css: bento CSS written (later blocks preserved)")
+
+    # ── js: drop the lottie-panel wiring, back to the plain photo cards ──
+    js = open(JS, encoding="utf-8").read()
+    if ANIM_JS_MARK in js:
+        tail_at = js.rstrip().rfind("})();")
+        mark_at = js.find(ANIM_JS_MARK)
+        js = js[:mark_at].rstrip() + "\n" + js[tail_at:]
+        open(JS, "w", encoding="utf-8").write(js)
+        print("assets/xtract.js: anim-panel wiring removed")
 
 
 if __name__ == "__main__":

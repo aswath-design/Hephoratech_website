@@ -1206,8 +1206,8 @@ html.theming .foot-news,
 html.theming .band,
 html.theming .q,
 html.theming .info-item{
-  transition:background-color .6s var(--soft),background-image .6s var(--soft),
-             color .6s var(--soft),border-color .6s var(--soft),box-shadow .6s var(--soft) !important;
+  transition:background-color .38s var(--soft),background-image .38s var(--soft),
+             color .38s var(--soft),border-color .38s var(--soft) !important;
 }
 @media(prefers-reduced-motion:reduce){
   .theme-tg,.theme-tg svg{transition:none}
@@ -2023,6 +2023,9 @@ section.alt + .pshow{padding-top:56px}
   opacity:.66;transition:transform 1.5s var(--ease),opacity .6s var(--ease);
 }
 .sb-card:hover .sb-art{transform:scale(1.07);opacity:.8}
+/* the SVG variant is an <img>, so it needs object-fit to behave like the
+   background-image photos do — same box, same crop, card size unchanged */
+img.sb-art{width:100%;height:100%;object-fit:cover;object-position:center}
 .sb-card::after{
   content:'';position:absolute;inset:0;z-index:-1;
   background:linear-gradient(180deg,rgba(4,6,13,.12) 0%,rgba(4,6,13,.72) 50%,rgba(4,6,13,.96) 100%);
@@ -2065,11 +2068,51 @@ html[data-theme="light"] .sb-card:hover{box-shadow:0 44px 90px -42px rgba(15,35,
   .sbento{grid-template-columns:repeat(2,1fr)}
   .sb-card,.sb-card.wide{grid-column:span 1!important;min-height:300px}
 }
+/* ═══ SERVICE CARD MOTION ═══ */
+/* The artwork drifts very slowly so the cards feel alive at rest. `scale` and
+   `translate` are separate properties from `transform`, so the idle drift and
+   the hover scale compose instead of fighting each other. */
+.sb-art{
+  animation:sbDrift 34s ease-in-out infinite alternate;
+  will-change:scale,translate;
+}
+@keyframes sbDrift{
+  from{scale:1.02;translate:0 0}
+  to{scale:1.13;translate:-2.5% -2%}
+}
+/* different durations + directions so the six never move in lockstep */
+.sb-card:nth-child(2) .sb-art{animation-duration:29s;animation-direction:alternate-reverse}
+.sb-card:nth-child(3) .sb-art{animation-duration:41s}
+.sb-card:nth-child(4) .sb-art{animation-duration:36s;animation-direction:alternate-reverse}
+.sb-card:nth-child(5) .sb-art{animation-duration:31s}
+.sb-card:nth-child(6) .sb-art{animation-duration:44s;animation-direction:alternate-reverse}
+
+/* a light sweep that crosses the card on hover */
+.sb-card::before{
+  content:'';position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(105deg,transparent 38%,rgba(140,180,255,.13) 48%,
+             rgba(190,215,255,.2) 52%,rgba(140,180,255,.13) 56%,transparent 66%);
+  transform:translateX(-130%);
+  transition:transform 1.1s cubic-bezier(.22,1,.36,1);
+}
+.sb-card:hover::before{transform:translateX(130%)}
+
+/* the artwork brightens and the blue lifts as you hover */
+.sb-card:hover .sb-art{opacity:.9;filter:saturate(1.15) brightness(1.06)}
+.sb-art{filter:saturate(1) brightness(1);transition:transform 1.5s var(--ease),opacity .6s var(--ease),filter .6s var(--ease)}
+
+@media (prefers-reduced-motion:reduce){
+  .sb-art{animation:none}
+  .sb-card::before{display:none}
+}
 @media(max-width:640px){
   .sbento{grid-template-columns:1fr;gap:16px}
   .sb-card{padding:24px;min-height:280px}
   .sb-card h3,.sb-card.wide h3{font-size:1.28rem}
 }
+/* ═══ END SERVICES BENTO ═══ */
+
+
 
 /* ═══ PRODUCTS SPLIT (v2 layout) ═══ */
 .p2wrap{display:flex;flex-direction:column;gap:64px;margin-top:8px}
@@ -2124,6 +2167,7 @@ html[data-theme="light"] .p2-tags span{background:rgba(15,35,80,.04)}
   .p2row.flip .p2-txt{order:0}
   .p2-txt p{max-width:none}
 }
+/* ═══ END PRODUCTS SPLIT ═══ */
 
 /* ═══ PERF PASS ═══ */
 /* Smaller blur radius — gaussian blur cost scales with radius, and at this
@@ -2164,3 +2208,29 @@ html[data-theme="light"] .p2-tags span{background:rgba(15,35,80,.04)}
 .foot-legal{display:flex;gap:16px;flex-wrap:wrap}
 .foot-legal a{color:var(--muted-2);font-size:.82rem;transition:color .3s}
 .foot-legal a:hover{color:var(--text)}
+
+/* ═══ HERO RINGS ═══ */
+.hero{isolation:isolate}
+.hero>.wrap{position:relative;z-index:3}
+.hero-rings{
+  position:absolute;inset:0;z-index:0;pointer-events:auto;overflow:hidden;
+  opacity:0;transition:opacity 1.6s var(--ease);
+  -webkit-mask-image:radial-gradient(ellipse 78% 76% at 50% 46%,#000 44%,transparent 86%);
+  mask-image:radial-gradient(ellipse 78% 76% at 50% 46%,#000 44%,transparent 86%);
+}
+.hero-rings.ready{opacity:.9}
+.hero-rings canvas{display:block;width:100%;height:100%}
+/* the rings are brightest at the centre, which is where the headline sits —
+   this keeps the type readable without dulling the edges of the effect */
+.hero-rings::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 40% 35% at 50% 44%,rgba(4,6,13,.62),rgba(4,6,13,.24) 58%,transparent 78%);
+}
+html[data-theme="light"] .hero-rings.ready{opacity:.5}
+html[data-theme="light"] .hero-rings::after{
+  background:radial-gradient(ellipse 40% 35% at 50% 44%,rgba(247,249,254,.74),rgba(247,249,254,.34) 58%,transparent 78%);
+}
+/* the old orbs would double up with the rings */
+.orb-1,.orb-2{opacity:.1}
+@media(max-width:760px){.hero-rings{display:none}.orb-1,.orb-2{opacity:.5}}
+@media (prefers-reduced-motion:reduce){.hero-rings{display:none}.orb-1,.orb-2{opacity:.5}}
