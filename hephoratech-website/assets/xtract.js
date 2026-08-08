@@ -313,9 +313,67 @@
     });
   });
 
-  /* ---- newsletter (demo) ---- */
-  document.querySelectorAll('form[data-demo]').forEach(f=>{
-    f.addEventListener('submit', e=>{ e.preventDefault(); const b=f.querySelector('button'); if(b) b.textContent='Subscribed ✓'; });
+  /* ---- newsletter → email ---- */
+  document.querySelectorAll('form[data-news]').forEach(f=>{
+    const btn   = f.querySelector('button[type="submit"]') || f.querySelector('button');
+    const input = f.querySelector('input[type="email"]');
+    const original = btn ? btn.textContent : 'Subscribe';
+
+    /* honeypot — real people never see it, naive bots fill it in */
+    const trap = document.createElement('input');
+    trap.type = 'checkbox'; trap.name = 'botcheck'; trap.tabIndex = -1;
+    trap.autocomplete = 'off'; trap.style.display = 'none';
+    f.appendChild(trap);
+
+    /* status line lives after the form: .foot-news is a flex row */
+    const status = document.createElement('div');
+    status.className = 'form-status foot-news-status';
+    f.insertAdjacentElement('afterend', status);
+
+    function say(kind, msg){
+      status.className = 'form-status foot-news-status show ' + kind;
+      status.innerHTML = (kind === 'ok'
+        ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>'
+        : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="12" cy="12" r="10"/><path d="M12 8v5M12 16h.01"/></svg>') + '<span>' + msg + '</span>';
+    }
+
+    f.addEventListener('submit', async e=>{
+      e.preventDefault();
+      const key   = f.dataset.news;
+      const email = input ? input.value.trim() : '';
+      if(!email) return;
+
+      /* no key configured → hand off to the visitor's mail app rather than lie */
+      if(!key || key === 'YOUR-ACCESS-KEY-HERE'){
+        location.href = 'mailto:info@hephoratech.com?subject=' +
+          encodeURIComponent('Newsletter signup') + '&body=' + encodeURIComponent('Please add me to the list: ' + email);
+        say('ok','Opening your email app so you can send this to us…');
+        return;
+      }
+
+      const data = new FormData();
+      data.append('access_key', key);
+      data.append('email', email);
+      data.append('subject', 'New newsletter subscriber — hephoratech.com');
+      data.append('from_name', 'HephoraTech Website');
+      if(trap.checked) data.append('botcheck', 'on');
+
+      if(btn){ btn.textContent = 'Sending…'; btn.disabled = true; }
+      try{
+        const res = await fetch('https://api.web3forms.com/submit', {method:'POST', body:data});
+        const out = await res.json();
+        if(out.success){
+          say('ok','You’re on the list — thanks for subscribing.');
+          f.reset();
+        } else {
+          say('err', out.message || 'Something went wrong. Please email info@hephoratech.com directly.');
+        }
+      }catch(err){
+        say('err','Could not subscribe right now. Please email info@hephoratech.com directly.');
+      }finally{
+        if(btn){ btn.textContent = original; btn.disabled = false; }
+      }
+    });
   });
 
   if(reduce) return;

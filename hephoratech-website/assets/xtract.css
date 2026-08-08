@@ -1711,6 +1711,7 @@ footer::before{
 .foot-news input::placeholder{color:var(--muted-2)}
 .foot-news button{flex-shrink:0;padding:9px 16px;font-size:.79rem;border-radius:9px}
 .foot-news-note{font-size:.72rem;color:var(--muted-2);margin-top:9px}
+.foot-news-status{max-width:320px;margin-top:10px;padding:10px 13px;font-size:.79rem}
 
 .foot-bot{
   position:relative;z-index:1;border-top:1px solid var(--line);padding-top:24px;

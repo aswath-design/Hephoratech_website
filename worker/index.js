@@ -54,7 +54,7 @@ language, no marketing fluff. Use "we" when talking about HephoraTech.
 Small in-house team; the people who scope a project also build and support it.
 
 === CONTACT ===
-Email Aswath@hephoratech.com, phone/WhatsApp +91 99942 29860, based in
+Email info@hephoratech.com, phone/WhatsApp +91 99942 29860, based in
 Tiruppur, Tamil Nadu. The contact page has an enquiry form.
 
 === RULES ===

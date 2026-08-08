@@ -11,6 +11,9 @@ node_modules/
 dist/
 *.log
 
+# wrangler local state — caches the Cloudflare account id, keep it out of git
+.wrangler/
+
 # reference frames pulled from screen recordings (not part of the site)
 _refframes/
 _ref2/
