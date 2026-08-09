@@ -2067,7 +2067,15 @@ html[data-theme="light"] .sb-card{border-color:rgba(15,35,80,.1);
 html[data-theme="light"] .sb-card:hover{box-shadow:0 44px 90px -42px rgba(15,35,80,.55),0 0 30px rgba(30,95,255,.12)}
 @media(max-width:1000px){
   .sbento{grid-template-columns:repeat(2,1fr)}
-  .sb-card,.sb-card.wide{grid-column:span 1!important;min-height:300px}
+  /* Every card becomes a narrow column here, so the heading wraps to more lines
+     and the bottom-anchored body climbs into the ribbon's space. One lane, and
+     enough height to keep a gap. Applies to the 640px range too. */
+  .sb-card,.sb-card.wide{grid-column:span 1!important;min-height:332px}
+  /* a `.wide` card is no longer wide at this breakpoint, so its larger heading
+     just wraps to an extra line and pushes the body up into the ribbon */
+  .sb-card.wide h3{font-size:1.36rem}
+  .sb-lane.rev{display:none}
+  .sb-flow{top:48px}
 }
 /* ═══ SERVICE CARD MOTION ═══ */
 /* The artwork drifts very slowly so the cards feel alive at rest. `scale` and
@@ -2102,13 +2110,216 @@ html[data-theme="light"] .sb-card:hover{box-shadow:0 44px 90px -42px rgba(15,35,
 .sb-card:hover .sb-art{opacity:.9;filter:saturate(1.15) brightness(1.06)}
 .sb-art{filter:saturate(1) brightness(1);transition:transform 1.5s var(--ease),opacity .6s var(--ease),filter .6s var(--ease)}
 
+/* ═══ SERVICE CARD — capability ribbon ═══ */
+/* Pills stream across the empty upper half of each card, reusing the hero
+   marquee's `slide` keyframe. Items carry their own right margin rather than
+   the track using `gap`: the track is the list duplicated once, so
+   translateX(-50%) only loops seamlessly if every item contributes identical
+   width — a `gap` leaves one fewer gap in the first half and the loop jumps. */
+/* Sits in the gap between the card number (ends ~41px) and the bottom-anchored
+   body (starts 113px on wide cards, 83px on narrow). One `top` has to clear
+   both, so the two-lane stack is sized to fit the narrower budget. */
+.sb-flow{
+  position:absolute;left:0;right:0;top:48px;z-index:0;
+  display:flex;flex-direction:column;gap:7px;pointer-events:none;
+}
+.sb-lane{
+  overflow:hidden;
+  mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);
+}
+.sb-track{display:flex;width:max-content;animation:slide 30s linear infinite}
+.sb-lane.rev .sb-track{animation-direction:reverse;animation-duration:38s}
+.sb-track i{
+  font-style:normal;white-space:nowrap;margin-right:9px;
+  font-size:.63rem;font-weight:600;letter-spacing:.03em;
+  color:rgba(255,255,255,.6);padding:4px 9px;border-radius:100px;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.11);
+  transition:color .55s var(--ease),background .55s var(--ease),border-color .55s var(--ease);
+}
+.sb-card:hover .sb-track i{
+  color:rgba(255,255,255,.92);
+  background:rgba(30,95,255,.22);border-color:rgba(120,165,255,.36);
+}
+
+/* ═══ SERVICE CARD — Lottie ═══ */
+/* Sits exactly where the photo did: full-bleed at z-index -2, under the card's
+   ::after scrim and the text. The player is told to `slice` rather than `meet`
+   so a square animation covers a wide card instead of shrinking to fit its
+   height. Being absolute and inset it can never reflow the card, so no CLS. */
+/* Right-hand side of the card, so the animation reads as a motif beside the
+   copy instead of a full-bleed wash behind it. The artwork is square and
+   `meet`-fitted, so its rendered size is min(container width, card height) —
+   the card has to be tall enough or the height caps it. */
+.sb-card.sb-plain{min-height:430px}
+.sb-lottie{
+  position:absolute;top:0;bottom:0;right:0;left:auto;width:58%;
+  z-index:-2;pointer-events:none;
+  opacity:0;transition:opacity .8s var(--ease);
+}
+.sb-lottie svg{width:100%!important;height:100%!important;display:block}
+/* This animation carries a sigma-60 gaussian blur. Filter regions paint well
+   outside the composition box, and lottie's <svg> defaults to overflow:hidden,
+   which sliced the glow off at the edges. Letting it overflow keeps the artwork
+   at full size — the card's own overflow:hidden still contains it. */
+.sb-lottie svg{overflow:visible}
+/* the photo only steps aside once the animation is actually running */
+.sb-card.lottie-live .sb-art{opacity:0}
+/* it is the card's only artwork now, so it carries more weight than it did
+   layered over a photo. The ::after scrim still sits above it and keeps the
+   text legible at the bottom of the card. */
+.sb-card.lottie-live .sb-lottie{opacity:.82}
+.sb-card.lottie-live:hover .sb-lottie{opacity:1}
+
+/* ── photo-less cards follow the theme ──
+   The other five cards are locked dark on purpose: their artwork is a dark
+   photo and white text is the only thing readable on it. A card with no photo
+   has no such constraint, so `sb-plain` lets it go light with the rest of the
+   site. Applying this to a photo card would put ink-dark text on a dark image. */
+html[data-theme="light"] .sb-card.sb-plain{background:var(--bg-2)}
+html[data-theme="light"] .sb-card.sb-plain::after{
+  background:linear-gradient(180deg,rgba(251,252,254,0) 0%,rgba(251,252,254,.5) 52%,rgba(251,252,254,.88) 100%);
+}
+html[data-theme="light"] .sb-card.sb-plain h3{color:var(--text)}
+/* --muted-2 only reaches 3.65:1 on this background; the number is small bold
+   text, so it needs --muted to clear 4.5:1 */
+html[data-theme="light"] .sb-card.sb-plain .sb-num{color:var(--muted)}
+html[data-theme="light"] .sb-card.sb-plain .sb-go{color:var(--text)}
+html[data-theme="light"] .sb-card.sb-plain .sb-tags span{
+  color:var(--muted);background:var(--w05);border-color:var(--line-2);
+}
+html[data-theme="light"] .sb-card.sb-plain .sb-ico{background:var(--w08);border-color:var(--line-2)}
+html[data-theme="light"] .sb-card.sb-plain .sb-ico svg{stroke:var(--text)}
+html[data-theme="light"] .sb-card.sb-plain:hover .sb-ico svg{stroke:#fff}
+
+/* ═══ SERVICES — ZIG-ZAG ═══ */
+.szig{display:flex;flex-direction:column;gap:34px;margin-top:10px}
+.sz-row{display:grid;grid-template-columns:1fr 1.04fr;gap:40px;align-items:center;text-decoration:none}
+/* artwork leads, copy follows — every second row swaps sides */
+.sz-row .sz-art{order:1}
+.sz-row .sz-txt{order:2}
+.sz-row:nth-child(even) .sz-art{order:2}
+.sz-row:nth-child(even) .sz-txt{order:1}
+
+.sz-art{
+  /* the artwork is square, so a wide-but-short panel caps how big it renders:
+     size = min(panel width, panel height). Height is the binding constraint. */
+  position:relative;min-height:296px;border-radius:20px;overflow:hidden;isolation:isolate;
+  background:#0B0F1A;border:1px solid var(--line);
+  box-shadow:0 26px 60px -34px rgba(0,0,0,.85);
+  transition:transform .7s var(--ease),box-shadow .6s var(--ease),border-color .45s;
+}
+.sz-row:hover .sz-art{
+  transform:translateY(-6px);border-color:rgba(30,95,255,.4);
+  box-shadow:0 44px 90px -40px rgba(0,0,0,.95),0 0 34px rgba(30,95,255,.14);
+}
+.sz-img{
+  position:absolute;inset:0;background-size:cover;background-position:center;opacity:.74;
+  transition:transform 1.5s var(--ease),opacity .6s var(--ease);
+}
+.sz-row:hover .sz-img{transform:scale(1.06);opacity:.9}
+.sz-num{
+  position:absolute;top:18px;right:22px;z-index:2;font-family:var(--head);font-size:.78rem;
+  font-weight:700;letter-spacing:.12em;color:rgba(255,255,255,.4);
+}
+/* the animated panel carries no photo, so it can follow the theme */
+html[data-theme="light"] .sz-art-plain{background:var(--bg-2)}
+html[data-theme="light"] .sz-art-plain .sz-num{color:var(--muted)}
+/* inside a panel the animation fills the box, rather than hugging one side of a card */
+.sz-art .sb-lottie{inset:0;width:auto;right:0}
+.sz-row.lottie-live .sb-lottie{opacity:1}
+
+/* ── annotation callouts in the panel's side gaps ──
+   One SVG overlay rather than positioned spans: the elbow lines are angled, and
+   CSS-rotated boxes get fragile fast. Keeping lines, dots and words in a single
+   viewBox means every coordinate lives in one place and scales together.
+
+   The viewBox is 560×300 and the dots sit at radius 150 from its centre — that
+   maps exactly onto the artwork's edge, because the square animation is
+   height-fitted too, so both scale by the same panel-height factor.
+
+   aria-hidden: these duplicate the tag list in the copy column, so touch and
+   screen-reader users lose nothing by never seeing a hover state. */
+.sz-anno{
+  position:absolute;inset:0;width:100%;height:100%;
+  z-index:2;pointer-events:none;overflow:visible;
+}
+.sz-anno path{
+  fill:none;stroke:var(--pur-2);stroke-width:1.1;stroke-linecap:round;stroke-linejoin:round;
+  /* dash longer than any path here, so offsetting to 0 draws the whole line
+     outward from the dot on the ring */
+  stroke-dasharray:60;stroke-dashoffset:60;
+  transition:stroke-dashoffset .55s var(--ease);
+}
+.sz-anno circle{fill:var(--pur-2);opacity:0;transition:opacity .3s var(--ease)}
+.sz-anno text{
+  /* viewBox units, not px: the 300-unit box scales to the panel height, so
+     10.6 units lands at ~10.5px on screen. Uppercase at .15em matches
+     .sb-label and .pill-label — without it these read as body copy and
+     compete with the tag pills in the copy column. */
+  font-family:var(--body);font-size:10.6px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.15em;
+  fill:var(--muted);opacity:0;transition:opacity .45s var(--ease);
+}
+.sz-row:hover .sz-anno path,.sz-row:focus-visible .sz-anno path{stroke-dashoffset:0}
+.sz-row:hover .sz-anno circle,.sz-row:focus-visible .sz-anno circle,
+.sz-row:hover .sz-anno text,.sz-row:focus-visible .sz-anno text{opacity:1}
+/* the dot lands first, then the line draws, then the word arrives */
+.sz-anno g:nth-child(1) *{transition-delay:.02s}
+.sz-anno g:nth-child(2) *{transition-delay:.09s}
+.sz-anno g:nth-child(3) *{transition-delay:.16s}
+.sz-anno g:nth-child(4) *{transition-delay:.05s}
+.sz-anno g:nth-child(5) *{transition-delay:.12s}
+.sz-anno g:nth-child(6) *{transition-delay:.19s}
+.sz-anno text{transition-delay:inherit}
+@media (prefers-reduced-motion:reduce){
+  .sz-anno path{stroke-dasharray:none;stroke-dashoffset:0;opacity:0;transition:opacity .2s}
+  .sz-row:hover .sz-anno path{opacity:1}
+}
+/* below this the panel narrows, the side gaps close up, and the width rather
+   than the height starts driving the scale — the dots would drift off the ring */
+@media(max-width:1000px){ .sz-anno{display:none} }
+
+.sz-txt{display:flex;flex-direction:column;align-items:flex-start}
+.sz-ico{
+  width:44px;height:44px;border-radius:13px;display:grid;place-items:center;margin-bottom:12px;
+  background:var(--pur-soft);border:1px solid rgba(30,95,255,.28);
+  transition:transform .6s cubic-bezier(.34,1.4,.5,1);
+}
+.sz-ico svg{width:21px;height:21px;fill:none;stroke:var(--pur-2);stroke-width:2;
+  stroke-linecap:round;stroke-linejoin:round}
+.sz-row:hover .sz-ico{transform:scale(1.07) rotate(-5deg)}
+.sz-txt h3{color:var(--text);font-size:1.62rem;line-height:1.16;letter-spacing:-.025em;margin:6px 0 10px}
+.sz-txt p{color:var(--muted);font-size:.93rem;line-height:1.62;margin:0 0 14px;max-width:46ch}
+.sz-tags{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px}
+.sz-tags span{
+  font-size:.72rem;font-weight:600;letter-spacing:.03em;color:var(--muted);
+  padding:6px 13px;border-radius:100px;background:var(--w05);border:1px solid var(--line-2);
+}
+.sz-txt .sb-go{color:var(--text)}
+.sz-row:hover .sb-go{gap:12px}
+
+@media(max-width:900px){
+  .szig{gap:36px}
+  .sz-row{grid-template-columns:1fr;gap:22px}
+  /* once stacked the artwork always leads, whatever the row's parity */
+  .sz-row .sz-art,.sz-row:nth-child(even) .sz-art{order:1}
+  .sz-row .sz-txt,.sz-row:nth-child(even) .sz-txt{order:2}
+  .sz-art{min-height:248px}
+  .sz-txt h3{font-size:1.5rem}
+  .sz-txt p{font-size:.92rem}
+}
+
 @media (prefers-reduced-motion:reduce){
   .sb-art{animation:none}
   .sb-card::before{display:none}
+  .sb-track{animation:none}
 }
 @media(max-width:640px){
   .sbento{grid-template-columns:1fr;gap:16px}
-  .sb-card{padding:24px;min-height:280px}
+  /* no min-height override here — it would beat the 1000px block's taller value
+     and collapse the ribbon's gap again */
+  .sb-card{padding:24px}
   .sb-card h3,.sb-card.wide h3{font-size:1.28rem}
 }
 /* ═══ END SERVICES BENTO ═══ */

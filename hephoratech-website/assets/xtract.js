@@ -378,6 +378,62 @@
 
   if(reduce) return;
 
+  /* ---- lottie, loaded lazily ----
+     Uses the FULL build, not lottie_light: the light build ships no filter
+     support, so blurred layers render as hard-edged solids — the flow animation
+     turned its soft white glow into an opaque blob. 74KB gzipped vs 45KB, and
+     every animation sits below the fold.
+     Nothing here touches first paint, which keeps the initial page weight where
+     it is. Sitting below the `reduce` guard also means a visitor who asked for
+     reduced motion never downloads the player at all.
+     If the script or a file fails, the card keeps whatever static art it has. */
+  const lotties = document.querySelectorAll('[data-lottie]');
+  if(lotties.length){
+    let started = false;
+    const start = () => {
+      if(started) return;
+      started = true;
+      const s = document.createElement('script');
+      s.src = 'assets/lottie/lottie.min.js';
+      s.onload = () => {
+        if(typeof lottie === 'undefined') return;
+        lotties.forEach(el => {
+          try{
+            lottie.loadAnimation({
+              container: el, renderer: 'svg', loop: true, autoplay: true,
+              path: el.dataset.lottie,
+              /* `meet` = contain. `slice` scaled the square up to cover the
+                 card's full width and cropped it, which read as far too big.
+                 data-par lets a panel left-align its artwork instead of
+                 centring it — the annotation overlay reads the same value so
+                 the two always line up. */
+              rendererSettings: {
+                progressiveLoad: true,
+                preserveAspectRatio: el.dataset.par || 'xMidYMid meet'
+              }
+            });
+            /* only now hide the still art beneath it — if the player or the
+               JSON never arrives, the photo stays and the card looks intact */
+            const card = el.closest('.sz-row, .sb-card');
+            if(card) card.classList.add('lottie-live');
+          }catch(e){ /* card falls back to its static art */ }
+        });
+      };
+      document.head.appendChild(s);
+    };
+    /* Deliberately NOT gated on IntersectionObserver or a scroll event. Both
+       proved unreliable here and their failure mode is the worst one available
+       — the panel stays blank forever with no error. Waiting for `load` then
+       idle keeps this off the critical path (first paint and LCP are already
+       done by then) while making it certain the animation appears. */
+    const boot = () => {
+      const idle = window.requestIdleCallback || (fn => setTimeout(fn, 300));
+      idle(start, { timeout: 2000 });
+    };
+    if(document.readyState === 'complete') boot();
+    else addEventListener('load', boot, { once: true });
+  }
+
   /* ---- starfield canvas ---- */
   const host = document.getElementById('stars');
   if(host){
