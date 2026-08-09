@@ -99,7 +99,9 @@
     var canvas = document.createElement('canvas');
     var gl = canvas.getContext('webgl', { alpha: true, antialias: true, depth: false })
           || canvas.getContext('experimental-webgl', { alpha: true, antialias: true, depth: false });
-    if (!gl) return null;
+    /* every bail-out here used to return null in silence, which is how this
+       effect could be completely absent with nothing to show for it */
+    if (!gl) { console.warn('[hero-rings] WebGL unavailable — hero background skipped'); return null; }
 
     var vs = compile(gl, gl.VERTEX_SHADER, VERT);
     var fs = compile(gl, gl.FRAGMENT_SHADER, FRAG);
@@ -232,7 +234,10 @@
        with no error to show for it. The observer below still does its real job
        — pausing the loop once the hero scrolls out of view. */
     var visible = true;
-    api.play();
+    /* frame() schedules the next rAF at its top, so calling it directly both
+       paints immediately and starts the loop. A synchronous first paint means
+       the rings are on screen even where rAF is throttled or never runs. */
+    frame(performance.now());
     new IntersectionObserver(function (es) {
       visible = es[0].isIntersecting;
       visible && !document.hidden ? api.play() : api.pause();
