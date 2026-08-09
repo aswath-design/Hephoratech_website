@@ -226,7 +226,13 @@
       pause: function () { if (raf) { cancelAnimationFrame(raf); raf = 0; } }
     };
 
-    var visible = false;
+    /* Start drawing immediately rather than waiting for the observer's first
+       callback. Gating the initial play on IntersectionObserver means that if
+       it never fires, the canvas sits fully initialised and permanently blank
+       with no error to show for it. The observer below still does its real job
+       — pausing the loop once the hero scrolls out of view. */
+    var visible = true;
+    api.play();
     new IntersectionObserver(function (es) {
       visible = es[0].isIntersecting;
       visible && !document.hidden ? api.play() : api.pause();
