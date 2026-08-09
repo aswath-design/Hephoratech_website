@@ -2444,8 +2444,44 @@ html[data-theme="light"] .hero-rings::after{
 }
 /* the old orbs would double up with the rings */
 .orb-1,.orb-2{opacity:.1}
-/* …but if WebGL is unavailable the rings never render, and dimmed orbs would
-   leave the hero with no background at all. Same value the mobile fallback uses. */
-html.no-hero-rings .orb-1,html.no-hero-rings .orb-2{opacity:.5}
-@media(max-width:760px){.hero-rings{display:none}.orb-1,.orb-2{opacity:.5}}
+/* the CSS rings below now carry the hero when WebGL can't, so the orbs only
+   need to lift a little rather than stand in for the whole effect */
+html.no-hero-rings .orb-1,html.no-hero-rings .orb-2{opacity:.3}
+
+/* ── CSS ring fallback ──
+   Runs wherever the shader can't: no GPU, a blocklisted driver, or the sub-760px
+   path where the WebGL loop is skipped on purpose. Same six rings, expanding and
+   fading on a stagger. Transform and opacity only, so it stays on the compositor
+   and costs almost nothing even on a phone. */
+.cssring{
+  position:absolute;left:50%;top:46%;
+  width:min(72vw,780px);aspect-ratio:1;border-radius:50%;
+  border:1px solid var(--pur);
+  transform:translate(-50%,-50%) scale(.28);
+  opacity:0;pointer-events:none;
+  animation:cssRing 6.4s linear infinite;
+}
+.cssring:nth-child(even){border-color:var(--pur-2)}
+.cssring:nth-child(2){animation-delay:-1.07s}
+.cssring:nth-child(3){animation-delay:-2.13s}
+.cssring:nth-child(4){animation-delay:-3.2s}
+.cssring:nth-child(5){animation-delay:-4.27s}
+.cssring:nth-child(6){animation-delay:-5.33s}
+@keyframes cssRing{
+  0%{transform:translate(-50%,-50%) scale(.28);opacity:0}
+  10%{opacity:.5}
+  60%{opacity:.15}
+  100%{transform:translate(-50%,-50%) scale(1.45);opacity:0}
+}
+/* hidden while the shader is doing the job */
+.hero-rings .cssring{display:none}
+html.no-hero-rings .hero-rings .cssring{display:block}
+/* the shader adds `ready` to fade the container in; without it that never
+   happens, so the fallback has to raise the opacity itself */
+html.no-hero-rings .hero-rings{opacity:.85}
+html[data-theme="light"].no-hero-rings .hero-rings{opacity:.45}
+/* phones skip the shader deliberately — hide the canvas, not the container, so
+   the CSS rings can still run. The JS marks `no-hero-rings` here too, since the
+   factory bails at this width. */
+@media(max-width:760px){.hero-rings canvas{display:none}.orb-1,.orb-2{opacity:.3}}
 @media (prefers-reduced-motion:reduce){.hero-rings{display:none}.orb-1,.orb-2{opacity:.5}}
