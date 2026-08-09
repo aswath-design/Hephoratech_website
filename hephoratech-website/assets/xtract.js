@@ -22,7 +22,9 @@
       const href = a.getAttribute('href') || '';
       if(a.target === '_blank' || a.hasAttribute('download')) return;
       if(!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:')) return;
-      if(!/\.html($|[?#])/.test(href) && href !== '/') return;
+      // internal page link: clean root-relative path (/about, /) — .html is still
+      // accepted so a stray old-style link keeps its transition
+      if(!/^\/[a-z0-9-]*$/.test(href) && !/\.html($|[?#])/.test(href)) return;
       if(e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
       e.preventDefault();
       document.body.classList.add('pt-leaving');
