@@ -891,7 +891,7 @@
         console.warn('[hero] magic-rings.js did not load — hero background skipped');
         return;
       }
-      window.HephoraMagicRings(host, {
+      var rings = window.HephoraMagicRings(host, {
       color:        '#1E5FFF',   // brand blue — inner rings
       colorTwo:     '#8FB4FF',   // pale blue  — outer rings
       ringCount:    6,
@@ -910,6 +910,11 @@
       hoverScale:   1.06,
         parallax:     0.03
       });
+      /* The rings return null on any browser without WebGL — hardware
+         acceleration off, a blocklisted GPU, a locked-down profile. The orbs
+         are dimmed to .1 on the assumption the rings are carrying the hero,
+         so without this the background is simply empty for those visitors. */
+      if(!rings) document.documentElement.classList.add('no-hero-rings');
     }
     // run now if the library is already there, otherwise wait for load
     if(window.HephoraMagicRings) init(); else addEventListener('load', init);
