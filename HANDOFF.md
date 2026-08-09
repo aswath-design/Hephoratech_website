@@ -39,7 +39,7 @@ cd "D:\Hephoratech\hephoratech-website"
 sed -i 's|xtract.css?v=14|xtract.css?v=15|g; s|xtract.js?v=14|xtract.js?v=15|g' *.html
 ```
 
-Current: `xtract.css/js?v=14`, `magic-rings.js?v=3`.
+Current: `xtract.css/js?v=15`, `magic-rings.js?v=3`.
 
 This cost hours in the last session — several rounds of changes appeared to do nothing
 because the browser held a stale `xtract.js`.
@@ -143,6 +143,20 @@ Fixed this session:
   16 pages plus `sameAs` on both the Organization and ProfessionalService schema.
 - **Google Business Profile** corrected: renamed `Hephora Tech` → `HephoraTech` (one word,
   matching the site), phone and website added. Website field points at the apex https URL.
+
+### Internal links must stay extensionless — and the JS is coupled to that
+
+All internal links are root-relative clean URLs (`/about`, `/service-seo`, `/` for home).
+**Do not write `href="about.html"`.** Workers Assets answers `/about.html` with a **307
+Temporary** redirect to `/about`; because it is temporary Google never consolidates the two,
+so it crawls both forever. That put 11 URLs into Search Console's "Page with redirect" on a
+16-page site.
+
+**The page-transition handler in `xtract.js` (~line 25) decides what counts as an internal
+link by pattern-matching the href.** It now accepts `^/[a-z0-9-]*$` and, as a fallback,
+`.html`. If you change the URL shape again, update that test in the same commit or every page
+transition on the site silently stops firing — no error, links still work, the animation just
+never runs.
 
 **www does not exist** (NXDOMAIN) and deliberately so. Non-www is canonical everywhere —
 all 16 canonicals, the sitemap, `og:url` and the schema. The string `www.hephoratech` appears
