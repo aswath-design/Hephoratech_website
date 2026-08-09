@@ -1,5 +1,21 @@
 # HephoraTech — setup guide
 
+> ## ⚠️ ARCHIVED — do not follow these steps
+>
+> Written for an early version of the site. Kept only for history. As of 09 Aug 2026:
+>
+> - **Never run `git branch -M main`.** The deploy branch is **`master`** and pushing to it
+>   deploys the live site. Renaming it breaks deploys. (The commands below have been removed.)
+> - Both setup tasks are **already done** — the Web3Forms key is live in `contact.html`, and
+>   the repo has been pushed for months.
+> - The file tree below is wrong: there are 16 pages, not 9, and `index-classic.html`,
+>   `assets/style.css` and `assets/app.js` were deleted long ago.
+> - §4 is wrong: `WA_NUMBER` no longer exists in `xtract.js`. The number is hardcoded across
+>   the HTML files — changing it is a find-and-replace.
+> - The contact address is now `info@hephoratech.com`, not `Aswath@`.
+>
+> **See [HANDOFF.md](HANDOFF.md) instead.**
+
 Two things need you to finish them: **pushing to GitHub** and **making the contact
 form email you**. Both are quick.
 
@@ -22,9 +38,8 @@ Remove-Item -Force .git\index.lock -ErrorAction SilentlyContinue
 Remove-Item -Force .git\HEAD.lock -ErrorAction SilentlyContinue
 Remove-Item -Force .git\refs\heads\master.lock -ErrorAction SilentlyContinue
 
-# rename the branch to main, then push
-git branch -M main
-git push -u origin main
+# the branch rename that was here has been REMOVED — see the banner at the top.
+# The deploy branch is master. Just: git push
 ```
 
 If you're in Command Prompt (cmd.exe) instead, this version works there:
@@ -34,8 +49,7 @@ cd D:\Hephoratech
 del /f /q .git\index.lock
 del /f /q .git\HEAD.lock
 del /f /q .git\refs\heads\master.lock
-git branch -M main
-git push -u origin main
+rem branch rename REMOVED — the deploy branch is master. Just: git push
 ```
 
 GitHub will ask you to sign in. Use a **personal access token** as the password

@@ -1,7 +1,12 @@
 # HephoraTech Website — Session Handoff
 
 Paste this into a new session to pick up where we left off.
-Last updated: 09 August 2026.
+Last updated: 09 August 2026 (second session that day — SEO/entity work).
+
+**The other three markdown files in this repo are stale.** `SETUP.md` and
+`HOW-TO-ADD-VIDEO.md` were written against earlier versions of the site and describe
+markup and files that no longer exist; `hephoratech-react-rebuild-plan.md` scopes 6 pages
+when there are 16. Trust this file over those.
 
 ## Project
 
@@ -51,7 +56,20 @@ cd "D:\Hephoratech\hephoratech-website"; python -m http.server 8080
 
 then `http://localhost:8080`. Served properly there are zero console errors.
 
-### 3. Do not gate anything on IntersectionObserver
+### 3. A static asset shadows the Worker — the Worker never runs for that path
+
+`wrangler.jsonc` binds `./hephoratech-website` as assets. **When a file matches the request
+path, Cloudflare serves it directly and does not invoke `worker/index.js`.** The Worker only
+runs when nothing matches — which is why `/api/chat` works.
+
+Same silent-failure shape as the two below. A 301 added to the Worker for
+`/product-attendance` did nothing while `product-attendance.html` still existed: no error,
+just a 200 where a 301 was expected. Deleting the file fixed it instantly.
+
+**So: to add a Worker redirect for a path that has an HTML file, delete the file in the same
+change.** Verify with `curl -sI` against the live URL, not by reading the code.
+
+### 4. Do not gate anything on IntersectionObserver
 
 This bit the codebase **three times** in one session. Its failure mode is the worst kind:
 no error, nothing in the console, just a feature that silently never starts. Both the Lottie
@@ -105,8 +123,54 @@ containing block and `body{overflow-x:hidden}` never clipped them. Fixed with
 `.orb{max-width:100%}`. Touch targets raised on phones — menu toggle was 20×22, now 44×44
 (needed `flex-shrink:0`, since `.nav-in` is a flex row).
 
+### SEO and entity signals (09 Aug, second session)
+
+The site's technical SEO was audited end to end and is clean: robots.txt allows all and
+declares the sitemap, all 15 sitemap URLs self-canonicalise, every page has a unique title
+and description, `404.html` is the only `noindex`, and the brand appears 3–6× in visible body
+text per page. **Indexing is confirmed working** — `site:hephoratech.com` returns the
+homepage, About, Products and Services, crawled within 2 days.
+
+Fixed this session:
+
+- **Always Use HTTPS** enabled in Cloudflare (SSL/TLS → Edge Certificates). Google had
+  `http://hephoratech.com/about` indexed as a separate host from the https pages, splitting
+  ranking signals. Now 301s, path preserved.
+- **`/product-attendance` → `/products`** as a real 301 in the Worker (see convention 3).
+  The old stub was a meta-refresh page that declared *itself* canonical.
+- **`<lastmod>`** added to all 15 sitemap URLs.
+- **LinkedIn company page created** — `linkedin.com/company/hephoratech` — and wired into all
+  16 pages plus `sameAs` on both the Organization and ProfessionalService schema.
+- **Google Business Profile** corrected: renamed `Hephora Tech` → `HephoraTech` (one word,
+  matching the site), phone and website added. Website field points at the apex https URL.
+
+**www does not exist** (NXDOMAIN) and deliberately so. Non-www is canonical everywhere —
+all 16 canonicals, the sitemap, `og:url` and the schema. The string `www.hephoratech` appears
+nowhere in the codebase. Do not "fix" this by switching to www.
+
+### The brand-name problem — read before doing more SEO work
+
+Searching `hephoratech` returns results for **`hiprotech`** (hiprotech.in, iPhone accessories,
+has a full Knowledge Panel). Google overrides the correction *even inside quote marks*, which
+means it has near-zero confidence the string is a real word. With autocorrect forced off,
+Google's own summary says:
+
+> "There is no prominent or widely recognized company... strictly named 'hephoratech'. The
+> exact string maps to a reserved or registered domain lookup identifier (hephoratech.com)
+> rather than an active corporate entity **with public listings**."
+
+That is an entity-recognition problem, not a code problem. Nothing left in the repo affects
+it. What does: public listings naming the entity (LinkedIn ✅, GBP ⏳, Play Store, Justdial /
+IndiaMART / Sulekha / Clutch), reviews, and real people searching the term and clicking
+"Search instead for". Expect months, not weeks.
+
+Upside: nobody owns the exact string `hephoratech` — the rivals are *hephatech*, *hepytech*,
+*hepotech*, *hiprotech*, all different strings. Once Google accepts the entity, the term is
+uncontested.
+
 ### Other
-- Social links live: Instagram + Facebook, `target="_blank" rel="noopener noreferrer"`.
+- Social links live: Instagram + Facebook + LinkedIn, `target="_blank" rel="noopener noreferrer"`.
+  No `href="#"` placeholders remain anywhere on the site.
 - Newsletter form is real (Web3Forms) — was fake, showed "Subscribed ✓" and discarded the address.
 - `404.html` added; `wrangler.jsonc` expects one and none existed.
 - Worker system prompt gave the pre-migration email; now `info@hephoratech.com`.
@@ -121,9 +185,12 @@ containing block and `body{overflow-x:hidden}` never clipped them. Fixed with
 | Item | Notes |
 |---|---|
 | **AI chat widget is down** | OpenAI account has no credits — `429`. Billing fix only, no code change. Top up at platform.openai.com. |
-| **LinkedIn icon is a dead link** | Still `href="#"` on 16 pages. No LinkedIn page exists yet; creating one also helps brand recognition (below). |
-| **Google autocorrects the brand** | Searching "hephoratech" returns results for "hiprotech". Not a site bug — the term has no authority yet. Needs time, backlinks, Google Business Profile, and brand searches. `sameAs` was the code-side part. |
-| **Only 5 of 15 pages indexed** | Request indexing in Search Console. All 15 sitemap URLs return 200 and self-canonicalise correctly — no technical blocker. |
+| **Brand autocorrects to `hiprotech`** | Confirmed 09 Aug, and stronger than previously recorded — Google overrides even quoted searches. Off-site only; see "The brand-name problem" above. No code fix exists. |
+| **GBP is manager-only** | Profile shows "Only visible to you" — the public can't find it. Most likely the pending name-change review, which a service-area business with no street address can make slower. Don't make further edits (each restarts the clock); if still hidden after ~2 weeks, use Support in Business Profile Manager. |
+| **Play Store developer name** | The food delivery app is live on Play. If the developer name isn't `HephoraTech`, fix it — it's a Google-owned high-authority listing. Then add the URL to `sameAs`. |
+| **No directory listings** | Justdial, IndiaMART, Sulekha, Clutch. Identical name/address/phone each time. This is the "public listings" Google says are missing. |
+| **No reviews** | GBP has zero. Three or four materially strengthen a new profile; prominence is one of Google's three local ranking factors. |
+| **Indexing** | Not a blocker — confirmed indexed and crawled. Still worth requesting indexing in Search Console for the service and product pages specifically. |
 | **`saas.json` is 178KB gz** | Embeds a 228KB PNG. With `social-media.json` (116KB) it is most of the animation payload. |
 | **Callouts for cards 02 and 06** | Possible but need a per-aspect overlay; the current one assumes square artwork. |
 | **Team photos missing** | `assets/team/{aswathaman,saran,giritharan,kamalesh}.jpg` are referenced on About and 404. They degrade to initials, so nothing looks broken. |
@@ -157,7 +224,8 @@ D:\Hephoratech\
 │   ├── assets/xtract.js        all behaviour incl. the Lottie loader
 │   ├── assets/magic-rings.js   WebGL hero background
 │   └── assets/lottie/          player + 6 animation JSONs
-├── worker/index.js             Worker: serves site, /api/chat → OpenAI
+├── worker/index.js             Worker: serves site, /api/chat → OpenAI,
+│                               GONE map of 301s for retired pages
 ├── wrangler.jsonc
 ├── HephoraTech-Profile.pdf     4-page client-facing capability profile
 └── hephoratech-react-rebuild-plan.md   scoped, not started
