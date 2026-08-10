@@ -6,12 +6,18 @@
 > (~220 lines) were deleted from `assets/xtract.js` and `assets/xtract.css`. Nothing on the
 > site references it.
 >
-> The **backend is still there**: `worker/index.js` still exposes `/api/chat`, still holds
-> `SYSTEM_PROMPT`, and the `OPENAI_API_KEY` secret is still set on Cloudflare. Nothing calls
-> it. To restore the widget you would need to rebuild the front end; to retire it fully,
-> delete `handleChat` and its route, then `npx wrangler secret delete OPENAI_API_KEY`.
+> The **backend is gone too**: `handleChat`, `SYSTEM_PROMPT`, the `cors`/`json` helpers and
+> the `/api/chat` route were deleted from `worker/index.js`, which went from 160 lines to 26.
+> That path now returns the normal 404.
 >
-> Kept only for the backend notes below.
+> Still outstanding: the Cloudflare secrets. Run
+> `npx wrangler secret delete OPENAI_API_KEY` (and `OPENAI_MODEL` if it was ever set).
+>
+> The `SYSTEM_PROMPT` had the services, timelines, products and team written up properly. If
+> the widget is ever rebuilt, recover it from git history rather than rewriting it:
+> `git show b972571:worker/index.js`
+>
+> Kept only as a record of how it worked.
 
 The widget is built and already on every page. It needs one thing to start
 answering: your OpenAI key, stored safely on Cloudflare.

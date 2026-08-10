@@ -198,7 +198,7 @@ uncontested.
 
 | Item | Notes |
 |---|---|
-| **AI chat widget removed** | Deleted 09 Aug 2026 — front end gone from `xtract.js` and `xtract.css`. The Worker still exposes `/api/chat` with `SYSTEM_PROMPT` and the `OPENAI_API_KEY` secret, now unreachable from the site. Decide whether to strip the backend too. |
+| **Delete the OpenAI secrets** | Front end and backend are both gone (09 Aug 2026), but the Cloudflare secrets remain. Run `npx wrangler secret delete OPENAI_API_KEY` and, if it was ever set, `OPENAI_MODEL`. Harmless but pointless to keep. |
 | **Brand autocorrects to `hiprotech`** | Confirmed 09 Aug, and stronger than previously recorded — Google overrides even quoted searches. Off-site only; see "The brand-name problem" above. No code fix exists. |
 | **GBP is manager-only** | Profile shows "Only visible to you" — the public can't find it. Most likely the pending name-change review, which a service-area business with no street address can make slower. Don't make further edits (each restarts the clock); if still hidden after ~2 weeks, use Support in Business Profile Manager. |
 | **Play Store developer name** | The food delivery app is live on Play. If the developer name isn't `HephoraTech`, fix it — it's a Google-owned high-authority listing. Then add the URL to `sameAs`. |
