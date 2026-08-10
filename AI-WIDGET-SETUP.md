@@ -1,5 +1,18 @@
 # Turning on the AI assistant
 
+> ## ⚠️ ARCHIVED — the widget was removed on 09 Aug 2026
+>
+> The chat bubble no longer exists. Its JavaScript (the `agent()` IIFE, ~187 lines) and CSS
+> (~220 lines) were deleted from `assets/xtract.js` and `assets/xtract.css`. Nothing on the
+> site references it.
+>
+> The **backend is still there**: `worker/index.js` still exposes `/api/chat`, still holds
+> `SYSTEM_PROMPT`, and the `OPENAI_API_KEY` secret is still set on Cloudflare. Nothing calls
+> it. To restore the widget you would need to rebuild the front end; to retire it fully,
+> delete `handleChat` and its route, then `npx wrangler secret delete OPENAI_API_KEY`.
+>
+> Kept only for the backend notes below.
+
 The widget is built and already on every page. It needs one thing to start
 answering: your OpenAI key, stored safely on Cloudflare.
 
