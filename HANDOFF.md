@@ -42,7 +42,7 @@ cd "D:\Hephoratech\hephoratech-website"
 sed -i 's|xtract.css?v=14|xtract.css?v=15|g; s|xtract.js?v=14|xtract.js?v=15|g' *.html
 ```
 
-Current: `xtract.css/js?v=20`, `magic-rings.js?v=3`.
+Current: `xtract.css/js?v=21`, `magic-rings.js?v=3`.
 
 This cost hours in the last session — several rounds of changes appeared to do nothing
 because the browser held a stale `xtract.js`.

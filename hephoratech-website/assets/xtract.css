@@ -1719,7 +1719,10 @@ footer::before{
   grid-template-columns:1.6fr 1fr 1fr 1.15fr;gap:36px;
   align-items:start;margin-bottom:36px;
 }
-.foot-logo img{height:38px;margin-bottom:16px}
+/* width:auto is required, not optional: the img carries width/height attributes
+   so it reserves space before loading, and without this the 452px attribute
+   wins and the logo stretches to 452x38. Same reason .nav-logo img has it. */
+.foot-logo img{height:38px;width:auto;margin-bottom:16px}
 .foot-logo p{color:var(--muted);font-size:.88rem;line-height:1.62;max-width:32ch;margin-bottom:20px}
 .foot-col h5{
   font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text);
