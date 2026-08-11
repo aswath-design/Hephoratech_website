@@ -139,12 +139,35 @@ nav{position:fixed;top:0;left:0;right:0;z-index:150;padding:16px 24px 0;transiti
   display:flex;align-items:center;justify-content:space-between;
   border-radius:16px;border:1px solid var(--line);
   background:var(--nav-bg);
-  backdrop-filter:blur(20px) saturate(150%);-webkit-backdrop-filter:blur(20px) saturate(150%);
+  /* 10px, not 20px. max-width/padding/gap below are all LAYOUT properties, so
+     every frame of the collapse re-lays-out the bar and re-rasterises this blur
+     over whatever is behind it. Blur cost scales with radius, and at this size
+     the frosted look is nearly identical. Durations shortened for the same
+     reason: same cost per frame, far fewer frames. */
+  backdrop-filter:blur(10px) saturate(150%);-webkit-backdrop-filter:blur(10px) saturate(150%);
   box-shadow:var(--nav-shadow),inset 0 1px 0 var(--w06);
-  transition:max-width .75s var(--ease),padding .6s var(--ease),border-radius .6s var(--ease),background .5s,gap .6s var(--ease);
+  transition:max-width .45s var(--ease),padding .4s var(--ease),border-radius .4s var(--ease),background .35s,gap .4s var(--ease);
 }
+
 .nav-logo{display:flex;align-items:center;flex-shrink:0}
 .nav-logo img{height:34px;width:auto;transition:height .55s var(--ease)}
+
+/* Centre the links: the logo and an empty trailing spacer take an equal share
+   of the leftover space, so the list sits dead centre whatever the logo width.
+   Must come after the .nav-logo rule above — same specificity, so the later
+   declaration is the one that wins. Only above the 860px breakpoint; below it
+   the links are hidden and the toggle needs the right edge. */
+@media(min-width:861px){
+  .nav-logo{flex:1 1 0}
+  .nav-links{flex:0 0 auto}
+  .nav-in::after{content:'';flex:1 1 0}
+  /* the collapsed pill centres its logo by itself — an equal-share spacer
+     would shove it into the left half */
+  nav.collapsed .nav-logo{flex:0 0 auto}
+  nav.collapsed .nav-in::after{flex:0 0 0}
+  nav.collapsed:hover .nav-logo,nav.collapsed:focus-within .nav-logo{flex:1 1 0}
+  nav.collapsed:hover .nav-in::after,nav.collapsed:focus-within .nav-in::after{flex:1 1 0}
+}
 
 /* the collapsed pill: only the logo shows, everything else folds away */
 nav.collapsed{padding:12px 24px 0}
