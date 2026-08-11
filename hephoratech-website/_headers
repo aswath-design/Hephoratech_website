@@ -1,0 +1,17 @@
+# Cloudflare Workers Assets serves everything with
+#   Cache-Control: public, max-age=0, must-revalidate
+# by default, so a repeat visitor makes a conditional request for every single
+# file — CSS, JS, the logo, all six Lottie JSONs — just to be told 304. That is
+# a round trip per asset on every page view.
+#
+# 7 days, not a year: xtract.css/js carry a ?v=N cache-buster so they could be
+# immutable, but the images and Lottie JSON do not, and a year of immutable on
+# an unversioned file means a replaced image never reaches anyone. A week kills
+# the revalidation traffic while keeping a sane worst case; stale-while-
+# revalidate lets the refresh happen in the background.
+#
+# HTML is deliberately left alone — it must keep revalidating so content and
+# version bumps appear immediately.
+
+/assets/*
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
