@@ -401,7 +401,7 @@
         if(typeof lottie === 'undefined') return;
         lotties.forEach(el => {
           try{
-            lottie.loadAnimation({
+            const anim = lottie.loadAnimation({
               container: el, renderer: 'svg', loop: true, autoplay: true,
               path: el.dataset.lottie,
               /* `meet` = contain. `slice` scaled the square up to cover the
@@ -418,6 +418,28 @@
                JSON never arrives, the photo stays and the card looks intact */
             const card = el.closest('.sz-row, .sb-card');
             if(card) card.classList.add('lottie-live');
+
+            /* Six SVG players looping at once is the single heaviest thing on
+               the page, and five of them are off screen at any moment. Pause
+               what cannot be seen — same treatment the starfield and the
+               videos already get.
+               This observer only ever STOPS work that is already running, so
+               it is safe under convention 4: if IntersectionObserver is
+               missing or misfires, every animation simply keeps playing and
+               the page looks exactly as it did before. */
+            let onScreen = true;
+            if(window.IntersectionObserver){
+              new IntersectionObserver(es => {
+                es.forEach(e => {
+                  onScreen = e.isIntersecting;
+                  onScreen ? anim.play() : anim.pause();
+                });
+              }, { rootMargin: '200px' }).observe(el);
+            }
+            /* stop during page transitions too, like the starfield — but only
+               resume what was actually on screen, or thaw would undo the pause */
+            addEventListener('ht:freeze', () => anim.pause());
+            addEventListener('ht:thaw', () => { if(onScreen) anim.play(); });
           }catch(e){ /* card falls back to its static art */ }
         });
       };
