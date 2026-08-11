@@ -1596,22 +1596,43 @@ html[data-theme="light"] .tree-card:hover{box-shadow:0 18px 40px rgba(15,35,80,.
 
 
 /* ═══ team ═══ */
-/* No photos: the card carries the name, the role and what the person actually
-   does. Left-aligned — a paragraph of body copy centred reads badly. */
-.team-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;align-items:stretch}
-.tm{
-  text-align:left;padding:26px 24px 28px;border-radius:16px;height:100%;
-  background:var(--grad-card);border:1px solid var(--line-2);
-  transition:border-color .5s var(--soft),transform .6s var(--soft),box-shadow .6s var(--soft);
+/* Vertical spine. Deliberately the same dot as `.pt` in "How we operate" higher
+   up the page — same 10px circle, same --pur fill, same 4px soft halo — so the
+   two sections read as one design rather than two components. Four columns of
+   cards gave each bio ~250px, which is too narrow for a paragraph; a single
+   column gives it the full measure. */
+.team-spine{position:relative;max-width:760px;margin:0 auto}
+/* the rail sits behind the dots and stops at the first and last one rather than
+   running the full height, so it reads as connecting them, not bracketing them */
+/* left = dot centre (18px padding + half of the 10px dot); translateX centres
+   the 1px rail on it exactly rather than landing half a pixel off */
+.team-spine::before{
+  content:'';position:absolute;left:23px;transform:translateX(-50%);
+  top:26px;bottom:26px;width:1px;background:var(--line-2);
 }
-.tm:hover{transform:translateY(-5px);border-color:rgba(30,95,255,.36);box-shadow:0 20px 46px rgba(0,0,0,.34)}
-html[data-theme="light"] .tm:hover{box-shadow:0 18px 40px rgba(15,35,80,.12)}
-.tm h3{font-size:1.06rem;font-weight:700;letter-spacing:-.01em;margin-bottom:4px}
-/* was an inline span beside the name; it needs its own line above the bio */
-.tm-role{display:block;font-size:.8rem;font-weight:600;color:var(--pur-3);margin-bottom:14px}
-.tm-bio{font-size:.86rem;line-height:1.62;color:var(--muted)}
-@media(max-width:860px){.team-grid{grid-template-columns:repeat(2,1fr);gap:18px}}
-@media(max-width:460px){.team-grid{grid-template-columns:1fr;max-width:340px;margin:0 auto}}
+.tmv{
+  position:relative;display:flex;gap:18px;padding:18px;border-radius:14px;
+  transition:background .4s var(--soft);
+}
+.tmv:hover{background:var(--w04)}
+/* z-index + the halo let the dot punch through the rail cleanly */
+.tmv .dot{
+  position:relative;z-index:1;width:10px;height:10px;border-radius:50%;
+  background:var(--pur);margin-top:9px;flex-shrink:0;
+  box-shadow:0 0 0 4px var(--pur-soft);
+}
+.tmv-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:7px}
+.tmv h3{font-size:1.06rem;font-weight:700;letter-spacing:-.01em}
+/* inline beside the name here, so it needs to shed the block display it had
+   when these were cards */
+.tmv .tm-role{display:inline;font-size:.8rem;font-weight:600;color:var(--pur-3)}
+.tm-bio{font-size:.9rem;line-height:1.68;color:var(--muted);max-width:62ch}
+@media(max-width:560px){
+  .tmv{padding:14px 10px;gap:14px}
+  /* padding drops to 10px, so the dot centre moves to 15px — the rail follows */
+  .team-spine::before{left:15px}
+  .tmv-head{gap:8px}
+}
 
 /* ═══ tech icon rail ═══ */
 .icon-rail{padding:6px 0 4px}
