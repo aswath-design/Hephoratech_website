@@ -86,7 +86,7 @@ currently covers:
 
 - All six services, with typical timelines
 - Both products, including that School Manager is still in development
-- The team — Aswathaman, Saran, Giritharan, Kamalesh
+- The team — Aswathaman, Saran, Giridharan, Kamalesh
 - Contact details
 
 It is explicitly instructed **not** to invent prices, client names, case

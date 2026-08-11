@@ -42,7 +42,7 @@ cd "D:\Hephoratech\hephoratech-website"
 sed -i 's|xtract.css?v=14|xtract.css?v=15|g; s|xtract.js?v=14|xtract.js?v=15|g' *.html
 ```
 
-Current: `xtract.css/js?v=21`, `magic-rings.js?v=3`.
+Current: `xtract.css/js?v=22`, `magic-rings.js?v=3`.
 
 This cost hours in the last session — several rounds of changes appeared to do nothing
 because the browser held a stale `xtract.js`.
@@ -217,7 +217,7 @@ uncontested.
 | **Indexing** | Not a blocker — confirmed indexed and crawled. Still worth requesting indexing in Search Console for the service and product pages specifically. |
 | **`saas.json` is 178KB gz** | Embeds a 228KB PNG. With `social-media.json` (116KB) it is most of the animation payload. |
 | **Callouts for cards 02 and 06** | Possible but need a per-aspect overlay; the current one assumes square artwork. |
-| **Team photos missing** | `assets/team/{aswathaman,saran,giritharan,kamalesh}.jpg` are referenced on About and 404. They degrade to initials, so nothing looks broken. |
+| **Team photos** | Resolved 09 Aug 2026 — the About cards now carry a one-line bio instead of a photo, and `assets/team/` is gone. Do not reintroduce photo placeholders. Note the spelling is **Giridharan**, not Giritharan. |
 | **Client naming** | The PDF says "a food business" rather than Chechi Puttu Kadai — still needs the client's permission to name them or use screenshots. |
 
 ---
