@@ -2209,9 +2209,11 @@ html[data-theme="light"] .p2-tags span{background:rgba(15,35,80,.04)}
 .sb-card,.p2-art{contain:paint}
 .sb-art{will-change:transform}
 
-/* The nav is the only backdrop-filter that stays on screen while scrolling;
-   promote it so it isn't re-rasterised each frame. */
-.nav-in{will-change:max-width,padding}
+/* The nav is the only backdrop-filter that stays on screen while scrolling.
+   There used to be a `will-change:max-width,padding` here claiming to promote
+   it — that does nothing: will-change only helps compositor properties
+   (transform, opacity, filter), never layout ones. backdrop-filter already
+   forces its own layer, so no hint is needed. */
 
 @media (prefers-reduced-motion:reduce){
   .orb-1,.orb-2{animation:none!important}

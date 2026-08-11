@@ -43,6 +43,14 @@
   const prog = document.getElementById('prog');
   const pars = [...document.querySelectorAll('[data-par]')];
   let ticking = false;
+  /* scrollHeight is a layout read: asking for it forces the browser to flush
+     layout, and doing that inside the scroll rAF — right before writing
+     prog.style.width — thrashed layout on every single frame. Measure it once
+     and only re-measure when the document actually changes size. */
+  let scrollable = 0;
+  const measure = () => {
+    scrollable = document.documentElement.scrollHeight - innerHeight;
+  };
   function onScroll(){
     if(ticking) return; ticking = true;
     requestAnimationFrame(()=>{
@@ -50,10 +58,16 @@
         nav.classList.toggle('scrolled', scrollY > 24);
         nav.classList.toggle('collapsed', scrollY > 150);
       }
-      if(prog){ const h = document.documentElement.scrollHeight - innerHeight; prog.style.width = (h>0 ? scrollY/h*100 : 0) + '%'; }
+      if(prog) prog.style.width = (scrollable > 0 ? scrollY/scrollable*100 : 0) + '%';
       ticking = false;
     });
   }
+  measure();
+  addEventListener('resize', measure, {passive:true});
+  addEventListener('load', measure, {once:true});
+  /* the page grows as Lottie and images settle, so track real size changes
+     rather than guessing — falls back to the resize listener alone */
+  if(window.ResizeObserver) new ResizeObserver(measure).observe(document.body);
   addEventListener('scroll', onScroll, {passive:true});
   onScroll();
 
