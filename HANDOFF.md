@@ -14,8 +14,11 @@ when there are 16. Trust this file over those.
 - **Live site:** hephoratech.com (Cloudflare Workers)
 - **Repo:** github.com/aswath-design/Hephoratech_website (branch `master`)
 - **Stack:** Static HTML/CSS/JS, no build step. Shared `assets/xtract.css` + `assets/xtract.js`.
-- **Backend:** Cloudflare Worker at `worker/index.js` — serves the site, proxies `/api/chat`
-  to OpenAI. Config in `wrangler.jsonc`.
+- **Backend:** Cloudflare Worker at `worker/index.js` — 26 lines: serves the site and 301s
+  retired URLs. Config in `wrangler.jsonc`. (It used to proxy `/api/chat` to OpenAI; the chat
+  widget and that endpoint were both removed 09 Aug 2026.)
+- **Chat widget:** now a hosted third-party script, `cdn.hephoratech.com/widget.js`, on all
+  16 pages. Not part of this repo's code — configured via `data-site-id` / `data-api`.
 
 ### Deploying — read this first
 
@@ -60,7 +63,7 @@ then `http://localhost:8080`. Served properly there are zero console errors.
 
 `wrangler.jsonc` binds `./hephoratech-website` as assets. **When a file matches the request
 path, Cloudflare serves it directly and does not invoke `worker/index.js`.** The Worker only
-runs when nothing matches — which is why `/api/chat` works.
+runs when nothing matches.
 
 Same silent-failure shape as the two below. A 301 added to the Worker for
 `/product-attendance` did nothing while `product-attendance.html` still existed: no error,
@@ -94,9 +97,16 @@ stock photos deleted; `assets/services/` no longer exists.
 - Loads after `load` then on idle, so first paint and LCP are untouched.
 - `data-par` on the container overrides `preserveAspectRatio` per card (card 01 left-aligns).
 
-**Weights (gzipped):** web-app-development 7.7KB · seo 8.9KB · ai-animation-flow 10.4KB ·
-ecommerce 75.8KB · social-media 115.9KB · **saas 177.8KB**. The last two embed PNGs and are
-~62% of the animation payload. Swapping them for pure-vector files would save ~250KB.
+**Weights (gzipped / raw):** web-app-development 7/80KB · seo 8/155KB · ai-animation-flow
+7/94KB · ecommerce 56/**1105**KB · social-media 109/**718**KB · **saas 179/356KB**. The raw
+figures matter more than the gzipped ones — that is what gets parsed and turned into SVG
+nodes. Re-exporting the three fat ones as pure vector is the single biggest perf win left.
+
+**All six pause when off screen** (added 09 Aug 2026). They previously ran `autoplay+loop`
+with nothing stopping them, so five animations rendered continuously off screen — the largest
+continuous cost on the page and the cause of reported lag. The observer only ever *stops*
+work already running, so convention 4 still holds. `ht:thaw` checks last observed visibility
+so a page transition cannot resume an offscreen animation.
 
 ### Hover callouts (cards 01, 03, 04 only)
 A dot on the artwork edge, an elbow line drawing outward, then a micro-caps label. One inline
