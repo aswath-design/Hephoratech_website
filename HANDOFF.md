@@ -126,6 +126,13 @@ off the `no-hero-rings` class the JS sets when the factory bails.
 On a machine with no GPU, WebGL is now simply unavailable — which is why the rings vanished on
 the owner's PC. Launch Chrome with `--enable-unsafe-swiftshader` to see them locally.
 
+### Default theme
+The site ships **light by default** (changed 09 Aug 2026). The anti-flash script in every
+`<head>` reads `ht-theme` from localStorage and falls back to `light`; it no longer follows
+`prefers-color-scheme`. The CSS is still authored dark-first with `html[data-theme="light"]`
+as the override, so light is an override that is now applied by default. The toggle is
+unaffected and a visitor's choice still wins.
+
 ### Mobile
 Every page scrolled sideways by 65px at 390px. Cause: the decorative `.orb` elements are
 `position:absolute` with no positioned ancestor, so their containing block is the initial
@@ -218,7 +225,7 @@ uncontested.
 | **`saas.json` is 178KB gz** | Embeds a 228KB PNG. With `social-media.json` (116KB) it is most of the animation payload. |
 | **Callouts for cards 02 and 06** | Possible but need a per-aspect overlay; the current one assumes square artwork. |
 | **Team photos** | Resolved 09 Aug 2026 — the About cards now carry a one-line bio instead of a photo, and `assets/team/` is gone. Do not reintroduce photo placeholders. Note the spelling is **Giridharan**, not Giritharan. |
-| **Client naming** | The PDF says "a food business" rather than Chechi Puttu Kadai — still needs the client's permission to name them or use screenshots. |
+| **Client naming** | Resolved on the site — the homepage and `/product-food-delivery` both name **Sai Logabala's Chechi Puttu Kadai**. Use that exact wording; do not invent a short form. `HephoraTech-Profile.pdf` still says "a food business" and could be regenerated to match. |
 
 ---
 
