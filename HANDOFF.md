@@ -1,7 +1,8 @@
 # HephoraTech Website — Session Handoff
 
 Paste this into a new session to pick up where we left off.
-Last updated: 09 August 2026 (second session that day — SEO/entity work).
+Last updated: 17 August 2026 (registrar outage). Earlier entries dated 09 August 2026
+are from the SEO/entity session and still current.
 
 **The other three markdown files in this repo are stale.** `SETUP.md` and
 `HOW-TO-ADD-VIDEO.md` were written against earlier versions of the site and describe
@@ -199,12 +200,49 @@ Upside: nobody owns the exact string `hephoratech` — the rivals are *hephatech
 *hepotech*, *hiprotech*, all different strings. Once Google accepts the entity, the term is
 uncontested.
 
+### Domain, DNS, and the 17 Aug outage — read this before debugging any downtime
+
+The domain is registered at **Namecheap** and delegated to Cloudflare nameservers
+**`amy.ns.cloudflare.com`** and **`byron.ns.cloudflare.com`**.
+
+On 17 Aug 2026 the site went fully down with `ERR_CONNECTION_REFUSED`. It was **not** the
+code, Cloudflare, or the deploy. Namecheap had suspended the domain for an **unverified
+WHOIS registrant email** — an ICANN requirement with a 15-day window, and the domain was
+registered on 2 Aug. The registrar overrode the nameservers at the registry with
+`verify-contact-details.namecheap.com` / `failed-whois-verification.namecheap.com` and
+pointed the domain at `198.54.117.242`, which serves a "Whois verification is pending" page.
+
+**The Namecheap panel kept showing the correct Cloudflare nameservers throughout** — the
+override is applied upstream of the panel, so the panel is not evidence of anything.
+
+**Diagnosing downtime, in order:**
+
+1. `nslookup -type=NS hephoratech.com 8.8.8.8` — anything other than amy/byron.ns.cloudflare.com
+   means a registrar problem. Stop looking at the code.
+2. Check the registry directly, which is authoritative and cannot be cached:
+   `curl -s https://rdap.verisign.com/com/v1/domain/hephoratech.com`
+   A healthy domain shows only `client transfer prohibited`. **`clientHold` or `serverHold`
+   means suspended.**
+3. Windows `nslookup` reads through the local resolver and happily reports stale answers.
+   For the true picture use `https://dns.google/resolve?name=hephoratech.com&type=A`.
+
+**Recovery:** verifying the email restores everything — no reconfiguration needed, the stored
+Cloudflare nameservers take effect again by themselves.
+
+**After recovery, caches lie for hours.** Browsers, routers, and especially Indian mobile
+carriers hold the bad record well past its 300s TTL. Chrome caches DNS separately from the OS
+(`chrome://net-internals/#dns` → Clear host cache, in addition to `ipconfig /flushdns`).
+A device that tried during the outage is the *worst* thing to test recovery with. Use
+`downforeveryoneorjustme.com` or a device that never tried.
+
+IPv6 was checked and ruled out during this incident: the AAAA records
+(`2606:4700:3035::ac43:b7b0`, `2606:4700:3032::6815:4872`) resolve and connect normally.
+
 ### Other
 - Social links live: Instagram + Facebook + LinkedIn, `target="_blank" rel="noopener noreferrer"`.
   No `href="#"` placeholders remain anywhere on the site.
 - Newsletter form is real (Web3Forms) — was fake, showed "Subscribed ✓" and discarded the address.
 - `404.html` added; `wrangler.jsonc` expects one and none existed.
-- Worker system prompt gave the pre-migration email; now `info@hephoratech.com`.
 - `sameAs` added to Organization + ProfessionalService schema (Instagram, Facebook).
 - Header "Start a Project" button removed from all 16 pages.
 - Orphaned `index-classic.html`, `style.css`, `app.js` removed; `.wrangler/` untracked.
@@ -213,19 +251,27 @@ uncontested.
 
 ## Outstanding
 
+Ordered by what actually matters.
+
 | Item | Notes |
 |---|---|
-| **Delete the OpenAI secrets** | Front end and backend are both gone (09 Aug 2026), but the Cloudflare secrets remain. Run `npx wrangler secret delete OPENAI_API_KEY` and, if it was ever set, `OPENAI_MODEL`. Harmless but pointless to keep. |
-| **Brand autocorrects to `hiprotech`** | Confirmed 09 Aug, and stronger than previously recorded — Google overrides even quoted searches. Off-site only; see "The brand-name problem" above. No code fix exists. |
-| **GBP is manager-only** | Profile shows "Only visible to you" — the public can't find it. Most likely the pending name-change review, which a service-area business with no street address can make slower. Don't make further edits (each restarts the clock); if still hidden after ~2 weeks, use Support in Business Profile Manager. |
-| **Play Store developer name** | The food delivery app is live on Play. If the developer name isn't `HephoraTech`, fix it — it's a Google-owned high-authority listing. Then add the URL to `sameAs`. |
-| **No directory listings** | Justdial, IndiaMART, Sulekha, Clutch. Identical name/address/phone each time. This is the "public listings" Google says are missing. |
+| **Confirm the WHOIS verification stuck** | The 17 Aug suspension was lifted, and the registry now shows only `client transfer prohibited` (healthy). But this is the one thing that can take the whole site down again. Namecheap → Profile → Contact Information should show no pending banner. |
+| **No uptime monitoring** | The 17 Aug outage ran ~1 hour before anyone noticed, and only by accident. UptimeRobot (free, 5-min checks on `https://hephoratech.com`) would have alerted in five minutes. Worth three minutes of setup. |
+| **Widget "Start chat" reportedly fails** | The hosted widget's prechat form does not proceed for the owner. **The API is not the cause** — `/v1/widget/config`, `/v1/widget/identify` and `/v1/widget/chat` were each tested end to end and all return 200, with correct CORS and preflight for `https://hephoratech.com`. Not reproducible from outside a browser. Widget source lives at `D:\AI Widget`; the client-side gate is a phone regex `/^[+]?[\d][\d\s\-()]{5,23}$/` that runs *before* any network call. Note `config` 403s without an `Origin` header — browsers always send one, so the live site is fine, but it will fail on any non-allowlisted origin. |
+| **Brand autocorrects to `hiprotech`** | Off-site only; see "The brand-name problem" above. As of 17 Aug the site ranks **first** for the exact term once autocorrect is disabled, and the AI Overview describes the company correctly from the site's own content — so only the correction itself remains. No code fix exists. |
+| **GBP is manager-only** | Profile shows "Only visible to you" — the public can't find it. Most likely the pending name-change review, slower for a service-area business with no street address. Don't make further edits (each restarts the clock); if still hidden after ~2 weeks, use Support in Business Profile Manager. |
+| **No directory listings** | Justdial, IndiaMART, Sulekha, Clutch. Identical name/address/phone each time. This is the "public listings" Google says are missing, and the lever for outranking the Facebook page on the brand term. |
 | **No reviews** | GBP has zero. Three or four materially strengthen a new profile; prominence is one of Google's three local ranking factors. |
-| **Indexing** | Not a blocker — confirmed indexed and crawled. Still worth requesting indexing in Search Console for the service and product pages specifically. |
-| **`saas.json` is 178KB gz** | Embeds a 228KB PNG. With `social-media.json` (116KB) it is most of the animation payload. |
+| **Delete the OpenAI secrets** | Front end and backend both gone, but the Cloudflare secrets remain. `npx wrangler secret delete OPENAI_API_KEY` and, if set, `OPENAI_MODEL`. Harmless but pointless. |
+| **Play Store developer account** | The food delivery app sits on the *client's* Play account, verified with the owner's personal identity — so its developer name is not HephoraTech's to change, and Google links accounts by identity (a ban on one can take the other down). Get the identity moved to the client before creating a HephoraTech org account. That needs a **D-U-N-S number**, free but up to 30 days. |
+| **Re-export the three fat Lottie files** | `ecommerce` 1105KB raw, `social-media` 718KB, `saas` 356KB — they embed PNGs. Pure-vector re-exports would cut ~250KB and reduce render cost. Design work, not code. Biggest perf win left. |
 | **Callouts for cards 02 and 06** | Possible but need a per-aspect overlay; the current one assumes square artwork. |
-| **Team photos** | Resolved 09 Aug 2026 — the About cards now carry a one-line bio instead of a photo, and `assets/team/` is gone. Do not reintroduce photo placeholders. Note the spelling is **Giridharan**, not Giritharan. |
-| **Client naming** | Resolved on the site — the homepage and `/product-food-delivery` both name **Sai Logabala's Chechi Puttu Kadai**. Use that exact wording; do not invent a short form. `HephoraTech-Profile.pdf` still says "a food business" and could be regenerated to match. |
+| **`HephoraTech-Profile.pdf` says "a food business"** | The site now names **Sai Logabala's Chechi Puttu Kadai** on the homepage and `/product-food-delivery`. The PDF could be regenerated to match; the reportlab script is not in the repo. |
+
+**Resolved, recorded so they are not re-done:** team photos (About cards carry bios now,
+`assets/team/` deleted — do not reintroduce placeholders); client naming permission (already
+named on the site, use that exact wording); indexing (confirmed indexed and crawled); the
+spelling is **Giridharan**, not Giritharan.
 
 ---
 
@@ -241,8 +287,9 @@ uncontested.
   the Worker) is refused. Keep form submission in the browser.
 - **PowerShell `curl`** is aliased to `Invoke-WebRequest` and rejects curl flags. Use
   `Invoke-RestMethod`.
-- **Secrets:** `npx wrangler secret put OPENAI_API_KEY` — the name goes on the command line, the
-  key at the prompt. Never in the command itself.
+- **Secrets:** `npx wrangler secret put NAME` takes the name on the command line and the value
+  at the prompt — never the value in the command. The only secrets left are the orphaned
+  OpenAI ones, pending deletion.
 
 ---
 
@@ -250,17 +297,28 @@ uncontested.
 
 ```
 D:\Hephoratech\
-├── hephoratech-website/        the site
-│   ├── assets/xtract.css       ~2500 lines, all styling
-│   ├── assets/xtract.js        all behaviour incl. the Lottie loader
+├── hephoratech-website/        the site — 16 HTML pages
+│   ├── _headers                Cache-Control for /assets/* (7 days + SWR).
+│   │                           Workers Assets otherwise sends max-age=0.
+│   ├── assets/xtract.css       ~2340 lines, all styling
+│   ├── assets/xtract.js        ~770 lines, all behaviour incl. the Lottie
+│   │                           loader and the page-transition link gate
 │   ├── assets/magic-rings.js   WebGL hero background
-│   └── assets/lottie/          player + 6 animation JSONs
-├── worker/index.js             Worker: serves site, /api/chat → OpenAI,
-│                               GONE map of 301s for retired pages
+│   └── assets/lottie/          player + 6 animation JSONs (~366KB gz total)
+├── worker/index.js             26 lines: serves assets, GONE map of 301s.
+│                               No /api/chat — removed with the old widget.
 ├── wrangler.jsonc
 ├── HephoraTech-Profile.pdf     4-page client-facing capability profile
-└── hephoratech-react-rebuild-plan.md   scoped, not started
+├── SETUP.md                    ARCHIVED — banner at top says why
+├── AI-WIDGET-SETUP.md          ARCHIVED — the widget it documents is gone
+├── HOW-TO-ADD-VIDEO.md         STALE — targets .srow-vis/.uim markup that
+│                               no longer exists after the Lottie rebuild
+└── hephoratech-react-rebuild-plan.md   scoped, not started; says 6 pages,
+                                there are 16
 ```
+
+Deleted and deliberately not coming back: `assets/team/`, `assets/services/`,
+`product-attendance.html`, `logo-light.png`, `index-classic.html`, `style.css`, `app.js`.
 
 ### The PDF
 `HephoraTech-Profile.pdf` — 4 pages, 82KB, built by a script kept in the session scratchpad
