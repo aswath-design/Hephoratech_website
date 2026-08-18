@@ -15,3 +15,25 @@
 
 /assets/*
   Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+# Security headers on every response. This is a static marketing site with no
+# accounts, payments or user input, so the real risk these close is low — the
+# reason they are here is that a prospective client sizing up a web agency may
+# run the domain through securityheaders.io, and an unset site scores an F.
+#
+# HSTS is the one with genuine value: it tells the browser never to use plain
+# HTTP for this domain again, closing the one unencrypted request that happens
+# when someone types the bare hostname and gets the http->https 301. One year,
+# includeSubDomains. Not adding `preload` — that is a hard commitment to HTTPS
+# on every subdomain forever and is deliberately left off.
+#
+# The rest are cheap hardening: nosniff stops content-type guessing, the frame
+# and referrer rules are clickjacking and privacy hygiene. No CSP: a correct
+# one would have to enumerate the Google Fonts, the cdn.hephoratech.com widget
+# and every inline script, and a wrong one silently breaks the page — not worth
+# it here.
+/*
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: SAMEORIGIN

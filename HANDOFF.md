@@ -48,7 +48,7 @@ cd "D:\Hephoratech\hephoratech-website"
 sed -i 's|xtract.css?v=14|xtract.css?v=15|g; s|xtract.js?v=14|xtract.js?v=15|g' *.html
 ```
 
-Current: `xtract.css/js?v=24`, `magic-rings.js?v=3`.
+Current: `xtract.css/js?v=25`, `magic-rings.js?v=3`.
 
 This cost hours in the last session — several rounds of changes appeared to do nothing
 because the browser held a stale `xtract.js`.
@@ -182,6 +182,53 @@ Every page scrolled sideways by 65px at 390px. Cause: the decorative `.orb` elem
 containing block and `body{overflow-x:hidden}` never clipped them. Fixed with
 `.orb{max-width:100%}`. Touch targets raised on phones — menu toggle was 20×22, now 44×44
 (needed `flex-shrink:0`, since `.nav-in` is a flex row).
+
+### Browser chrome follows the theme — theme-color + color-scheme (18 Aug 2026)
+
+Mobile browsers paint their own UI (the Android Chrome address-bar strip, the iOS status-bar
+area) from a `<meta name="theme-color">`. There wasn't one, so that strip stayed default grey
+against a `#FBFCFE` light page or a `#04060D` dark page — a visible seam at the top on a phone.
+Scrollbars and native form controls were also unstyled in dark mode because `color-scheme`
+was never set.
+
+Both are now driven from JS so they track the theme the page is **actually rendering** — which
+matters here specifically because the site drives its theme from `localStorage`, not
+`prefers-color-scheme` (changed 09 Aug). The obvious fix — two media-queried
+`<meta name="theme-color" media="(prefers-color-scheme: …)">` tags — would be **wrong**: a
+phone in dark mode showing the site's light theme would get a near-black bar over a near-white
+page. So instead:
+
+- A single static `<meta name="theme-color" content="#FBFCFE">` sits in every `<head>` (light
+  default, matching the site default).
+- The **anti-flash head script** (identical across all 16 pages) now also sets
+  `documentElement.style.colorScheme` and rewrites the meta's `content` to match the stored
+  theme, before first paint — so no flash of the wrong bar colour.
+- `swap()` in `xtract.js` — the single choke point every runtime toggle passes through —
+  does the same two updates, so the bar and scrollbars change in lock-step with the toggle.
+
+Values are the `--bg` tokens: light `#FBFCFE`, dark `#04060D`. Verified locally in both
+directions and across a reload with dark stored. **Worth an eyeball on a real phone**, since
+the address-bar strip is browser chrome and cannot be screenshotted from the tooling here.
+
+### Security headers (18 Aug 2026)
+
+`_headers` now sets four security headers on `/*`, on top of the existing `/assets/*` cache
+rule: `Strict-Transport-Security` (one year, `includeSubDomains`, **no `preload`** — preload
+is a hard, hard-to-reverse commitment), `X-Content-Type-Options: nosniff`,
+`Referrer-Policy: strict-origin-when-cross-origin`, `X-Frame-Options: SAMEORIGIN`.
+
+The real risk these close is low — static site, no accounts, no payments, no input beyond two
+Web3Forms. The reason they're here is commercial: a prospective client sizing up a web agency
+may run the domain through `securityheaders.io`, and an unset site scored an **F**. HSTS is the
+one with genuine value (it removes the single unencrypted request that the bare-hostname →
+https 301 otherwise makes).
+
+**No CSP** was added deliberately: a correct one must enumerate Google Fonts, the
+`cdn.hephoratech.com` widget and every inline script, and a wrong one silently breaks the page.
+Not worth it for the marginal gain here.
+
+`_headers` is a **Cloudflare-only** mechanism — `python -m http.server` ignores it, so these
+cannot be checked locally. Verify live with `curl -sI https://hephoratech.com/`.
 
 ### SEO and entity signals (09 Aug, second session)
 

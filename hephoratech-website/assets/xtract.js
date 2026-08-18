@@ -727,6 +727,14 @@
       if(mode === 'light') root.setAttribute('data-theme','light');
       else root.removeAttribute('data-theme');
       try{ localStorage.setItem('ht-theme', mode); }catch(e){}
+      /* Keep the browser's own chrome in step with the theme the page is
+         actually showing. The head script sets these on first paint; this is
+         the same update for every later toggle, so the phone's address-bar
+         strip and the scrollbars never lag a theme behind. Values match the
+         --bg tokens: light #FBFCFE, dark #04060D. */
+      root.style.colorScheme = mode === 'light' ? 'light' : 'dark';
+      const tc = document.querySelector('meta[name="theme-color"]');
+      if(tc) tc.setAttribute('content', mode === 'light' ? '#FBFCFE' : '#04060D');
       document.querySelectorAll('.theme-tg').forEach(b=>{
         b.setAttribute('aria-label', mode === 'light' ? 'Switch to dark theme' : 'Switch to light theme');
         b.setAttribute('aria-pressed', mode === 'light' ? 'true' : 'false');
