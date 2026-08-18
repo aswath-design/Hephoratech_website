@@ -403,9 +403,30 @@
      it is. Sitting below the `reduce` guard also means a visitor who asked for
      reduced motion never downloads the player at all.
      If the script or a file fails, the card keeps whatever static art it has. */
-  const lotties = document.querySelectorAll('[data-lottie]');
+  const lotties = [...document.querySelectorAll('[data-lottie]')];
   if(lotties.length){
     let started = false;
+
+    /* Mounting is serialised through this queue. All six used to be handed to
+       loadAnimation in one synchronous forEach, so six XHRs landed at once and
+       the browser built six SVG trees in overlapping frames — ecommerce
+       (1105KB raw) and social-media (718KB) parsing together is what made the
+       scroll stutter. One at a time costs nothing in wall-clock time (they are
+       spread across the scroll anyway) and keeps every frame cheap. */
+    const queue = [];
+    let draining = false;
+    const idle = window.requestIdleCallback || (fn => setTimeout(fn, 1));
+    const drain = () => {
+      if(draining) return;
+      const job = queue.shift();
+      if(!job) return;
+      draining = true;
+      /* the timeout is the guard: if the browser never goes idle — a long
+         scroll, a busy main thread — the job still runs within 1.2s */
+      idle(() => job(() => { draining = false; drain(); }), { timeout: 1200 });
+    };
+    const enqueue = job => { queue.push(job); drain(); };
+
     const start = () => {
       if(started) return;
       started = true;
@@ -413,7 +434,8 @@
       s.src = 'assets/lottie/lottie.min.js';
       s.onload = () => {
         if(typeof lottie === 'undefined') return;
-        lotties.forEach(el => {
+
+        const mount = (el, done) => {
           try{
             const anim = lottie.loadAnimation({
               container: el, renderer: 'svg', loop: true, autoplay: true,
@@ -454,19 +476,79 @@
                resume what was actually on screen, or thaw would undo the pause */
             addEventListener('ht:freeze', () => anim.pause());
             addEventListener('ht:thaw', () => { if(onScreen) anim.play(); });
-          }catch(e){ /* card falls back to its static art */ }
-        });
+
+            /* release the queue once this one's SVG tree exists, so the next
+               heavy file is never parsed on top of this one. The timeout is
+               there because a stalled or 404'd JSON must not wedge the queue
+               and leave every later card blank. */
+            let released = false;
+            const release = () => { if(released) return; released = true; done(); };
+            anim.addEventListener('DOMLoaded', release);
+            setTimeout(release, 3000);
+          }catch(e){ done(); /* card falls back to its static art */ }
+        };
+
+        /* ---- what triggers a mount ----
+           Convention 4 says do not gate anything on IntersectionObserver, and
+           this deliberately does not — there is no observer anywhere in the
+           trigger path. The test is a plain getBoundingClientRect proximity
+           check, which is synchronous, has no failure mode, and — unlike an
+           observer — keeps working while the tab is hidden, so a page opened
+           in a background tab still defers correctly instead of loading all
+           six.
+           Three independent things call it, so a mount cannot be missed:
+             1. immediately, for whatever is already on or near screen
+             2. scroll and resize, as rows come into range
+             3. a 1s sweep for the first 30s, covering reflow as fonts, images
+                and the hero settle — which is when the page height actually
+                moves. After that scroll and resize are sufficient on their own.
+           All of it stops once everything is mounted, so a visitor who parks at
+           the top is not left with a timer reading layout forever. */
+        const pending = new Set(lotties);
+        const request = el => {
+          if(!pending.has(el)) return;
+          pending.delete(el);
+          enqueue(done => mount(el, done));
+        };
+
+        /* 1400px of lead — roughly 1.5 screens on a phone. The heaviest file
+           is ~183KB over the wire, so this buys a slow connection several
+           seconds of head start and the artwork is in place before the row is
+           reached. The containers are a fixed height in CSS and the static art
+           holds the space until then, so nothing shifts when one mounts. */
+        const LEAD = 1400;
+        const sweep = () => {
+          if(!pending.size) return true;
+          [...pending].forEach(el => {
+            const r = el.getBoundingClientRect();
+            if(r.top < innerHeight + LEAD && r.bottom > -LEAD) request(el);
+          });
+          return !pending.size;
+        };
+
+        const stop = () => {
+          clearInterval(poll);
+          removeEventListener('scroll', sweep);
+          removeEventListener('resize', sweep);
+        };
+        sweep();
+        addEventListener('scroll', sweep, { passive: true });
+        addEventListener('resize', sweep, { passive: true });
+        let ticks = 0;
+        var poll = setInterval(() => {
+          if(sweep()) stop();
+          else if(++ticks >= 30) clearInterval(poll);
+        }, 1000);
       };
       document.head.appendChild(s);
     };
-    /* Deliberately NOT gated on IntersectionObserver or a scroll event. Both
-       proved unreliable here and their failure mode is the worst one available
-       — the panel stays blank forever with no error. Waiting for `load` then
-       idle keeps this off the critical path (first paint and LCP are already
-       done by then) while making it certain the animation appears. */
+    /* The player download is still deliberately NOT gated on an observer or a
+       scroll event — only the individual animation files are. Waiting for
+       `load` then idle keeps it off the critical path (first paint and LCP are
+       already done by then) while making it certain the player arrives. */
     const boot = () => {
-      const idle = window.requestIdleCallback || (fn => setTimeout(fn, 300));
-      idle(start, { timeout: 2000 });
+      const bootIdle = window.requestIdleCallback || (fn => setTimeout(fn, 300));
+      bootIdle(start, { timeout: 2000 });
     };
     if(document.readyState === 'complete') boot();
     else addEventListener('load', boot, { once: true });
