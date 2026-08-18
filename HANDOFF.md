@@ -1,7 +1,7 @@
 # HephoraTech Website — Session Handoff
 
 Paste this into a new session to pick up where we left off.
-Last updated: 18 August 2026 (dead files removed, Lottie lazy loading, www redirect).
+Last updated: 18 August 2026 (dead files removed, Lottie lazy loading, www deleted from DNS).
 Earlier entries dated 09 and 17 August 2026 are still current.
 
 **The three stale markdown files were deleted on 18 August 2026.** `SETUP.md`,
@@ -19,9 +19,10 @@ Trust this file over it.
 - **Live site:** hephoratech.com (Cloudflare Workers)
 - **Repo:** github.com/aswath-design/Hephoratech_website (branch `master`)
 - **Stack:** Static HTML/CSS/JS, no build step. Shared `assets/xtract.css` + `assets/xtract.js`.
-- **Backend:** Cloudflare Worker at `worker/index.js` — serves the site, sends www to the
-  apex, and 301s retired URLs. Config in `wrangler.jsonc`. (It used to proxy `/api/chat` to
-  OpenAI; the chat widget and that endpoint were both removed 09 Aug 2026.)
+- **Backend:** Cloudflare Worker at `worker/index.js` — serves the site and 301s retired
+  URLs. Carries a dormant www→apex guard that cannot fire while www is NXDOMAIN. Config in
+  `wrangler.jsonc`. (It used to proxy `/api/chat` to OpenAI; the chat widget and that
+  endpoint were both removed 09 Aug 2026.)
 - **Chat widget:** now a hosted third-party script, `cdn.hephoratech.com/widget.js`, on all
   16 pages. Not part of this repo's code — configured via `data-site-id` / `data-api`.
 
@@ -221,17 +222,31 @@ never runs.
 schema. The string `www.hephoratech` appears nowhere in the codebase. Do not "fix" this by
 switching to www.
 
-**But www is now broken, not absent (verified 18 Aug 2026).** This file previously said www
-was NXDOMAIN; that is no longer true. `www.hephoratech.com` resolves to the same proxied
-Cloudflare IPs as the apex (104.21.72.114, 172.67.183.176), `http://www` 301s to `https://www`
-via Always Use HTTPS — and then `https://www` returns **522**, because no Worker route covers
-the www hostname so Cloudflare has no origin to reach. Anyone who types the www form lands on
-a Cloudflare error page.
+**www is NXDOMAIN again, and this time on purpose (18 Aug 2026).** It briefly was not, and
+that mattered: a proxied `www` A record had appeared in the zone pointing at the same
+Cloudflare IPs as the apex, but no route reached an origin, so `https://www` served
+`error code: 522` — Cloudflare's "Web server is down" page. Anyone typing the www form saw
+what looks like a dead business.
 
-The fix is a redirect, not a canonical change: either a Cloudflare Redirect Rule
-(`www.hephoratech.com/*` → `https://hephoratech.com/$1`, 301), or add
-`www.hephoratech.com/*` as a Worker route and 301 in `worker/index.js`. A redirect rule is
-simpler and costs no Worker invocation.
+Three states were possible and it was sitting in the worst one:
+
+| State | What a visitor typing `www.` gets |
+|---|---|
+| 522 (where it was) | Cloudflare "Web server is down" error page |
+| NXDOMAIN (chosen) | Browser "site can't be reached" |
+| 301 to apex | The homepage |
+
+**The record was deleted rather than redirected — a deliberate call, not an oversight.**
+Verified after deletion: `www` returns NXDOMAIN (DNS status 3) and the apex is unaffected,
+still 200 on the same two IPs. Do not re-add a www record without also giving it somewhere
+to go; an unrouted record is a 522, which is strictly worse than no record.
+
+If you ever do want www to work, the cheap fix is a Cloudflare Redirect Rule
+(`www.hephoratech.com/*` → `https://hephoratech.com/${1}`, 301) — it runs at the edge before
+Workers and costs no invocation. Do **not** add `www.hephoratech.com/*` as a Worker route
+instead: Workers Assets would then serve the site on www directly (convention 3) and mirror
+all 16 pages on a second hostname. `worker/index.js` carries a dormant www→apex branch as a
+guard against exactly that.
 
 ### The brand-name problem — read before doing more SEO work
 
@@ -317,10 +332,11 @@ Ordered by what actually matters.
 | **No reviews** | GBP has zero. Three or four materially strengthen a new profile; prominence is one of Google's three local ranking factors. |
 | **Delete the OpenAI secrets** | Front end and backend both gone, but the Cloudflare secrets remain. `npx wrangler secret delete OPENAI_API_KEY` and, if set, `OPENAI_MODEL`. Harmless but pointless. |
 | **Play Store developer account** | The food delivery app sits on the *client's* Play account, verified with the owner's personal identity — so its developer name is not HephoraTech's to change, and Google links accounts by identity (a ban on one can take the other down). Get the identity moved to the client before creating a HephoraTech org account. That needs a **D-U-N-S number**, free but up to 30 days. |
-| **Activate the www redirect** | The Worker code is written and unit-tested, but **www is still 522** because no route reaches it. Fix in the Cloudflare dashboard: Rules → Redirect Rules → `www.hephoratech.com/*` → `https://hephoratech.com/${1}`, 301. Runs at the edge, costs no Worker invocation. Verify with `curl -sI https://www.hephoratech.com/`. |
 | **Re-export the three fat Lottie files** | `ecommerce` 1105KB raw, `social-media` 718KB, `saas` 356KB — they embed PNGs. Now deferred until scrolled to, so no longer a first-load cost, but still the heaviest thing to parse when they do arrive. Pure-vector re-exports would cut ~250KB. Design work, not code. |
 | **Callouts for cards 02 and 06** | Possible but need a per-aspect overlay; the current one assumes square artwork. |
 | **`HephoraTech-Profile.pdf` says "a food business"** | The site now names **Sai Logabala's Chechi Puttu Kadai** on the homepage and `/product-food-delivery`. The PDF could be regenerated to match; the reportlab script is not in the repo. |
+
+**Resolved 18 Aug 2026:** the www 522 — the record was deleted, www is NXDOMAIN by choice, see the DNS section above. Do not re-add it without routing it somewhere.
 
 **Resolved, recorded so they are not re-done:** team photos (About cards carry bios now,
 `assets/team/` deleted — do not reintroduce placeholders); client naming permission (already

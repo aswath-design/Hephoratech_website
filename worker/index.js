@@ -26,13 +26,16 @@ export default {
     // www → apex. Checked before anything else so the redirect wins over both
     // the GONE map and asset serving.
     //
-    // NOTE: this only runs if a Worker route actually covers the www hostname.
-    // As of 18 Aug 2026 no route does, which is why www returns a Cloudflare
-    // 522 rather than reaching this code. See HANDOFF.md — the recommended fix
-    // is a Cloudflare Redirect Rule, which runs at the edge before Workers and
-    // costs no invocation. This branch is here so that if a www route is ever
-    // added, the correct behaviour is already in place instead of www quietly
-    // serving a duplicate copy of the whole site.
+    // NOTE: as of 18 Aug 2026 this branch is dormant by design. www was
+    // deleted from DNS that day and is NXDOMAIN, so nothing reaches the
+    // Worker on that hostname and no route covers it. (Before deletion it
+    // resolved to Cloudflare but had no route, so it served a 522 error page
+    // — the one genuinely bad outcome of the three available.)
+    //
+    // The branch is kept as a guard, not as live behaviour: if a www record
+    // is ever re-added — by hand, or by a Cloudflare default when a setting
+    // is toggled — this makes the site 301 rather than quietly mirroring all
+    // 16 pages on a second hostname. Non-www stays canonical either way.
     if (url.hostname === `www.${CANONICAL_HOST}`) {
       url.hostname = CANONICAL_HOST;
       return Response.redirect(url.toString(), 301);
