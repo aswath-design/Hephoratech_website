@@ -1,13 +1,17 @@
 # HephoraTech Website — Session Handoff
 
 Paste this into a new session to pick up where we left off.
-Last updated: 17 August 2026 (registrar outage). Earlier entries dated 09 August 2026
-are from the SEO/entity session and still current.
+Last updated: 18 August 2026 (dead files removed, Lottie lazy loading, www redirect).
+Earlier entries dated 09 and 17 August 2026 are still current.
 
-**The other three markdown files in this repo are stale.** `SETUP.md` and
-`HOW-TO-ADD-VIDEO.md` were written against earlier versions of the site and describe
-markup and files that no longer exist; `hephoratech-react-rebuild-plan.md` scopes 6 pages
-when there are 16. Trust this file over those.
+**The three stale markdown files were deleted on 18 August 2026.** `SETUP.md`,
+`AI-WIDGET-SETUP.md` and `HOW-TO-ADD-VIDEO.md` all described markup, files and a chat
+widget that no longer exist; `HOW-TO-ADD-VIDEO.md` was also inside the deployed asset
+directory, so it was being served publicly at `/HOW-TO-ADD-VIDEO.md`. They are in git
+history if ever needed. The one remaining sibling,
+`hephoratech-react-rebuild-plan.md`, is a decision record and was kept — but it scopes
+6 pages when there are 16 and still lists the removed chat widget as something to port.
+Trust this file over it.
 
 ## Project
 
@@ -15,9 +19,9 @@ when there are 16. Trust this file over those.
 - **Live site:** hephoratech.com (Cloudflare Workers)
 - **Repo:** github.com/aswath-design/Hephoratech_website (branch `master`)
 - **Stack:** Static HTML/CSS/JS, no build step. Shared `assets/xtract.css` + `assets/xtract.js`.
-- **Backend:** Cloudflare Worker at `worker/index.js` — 26 lines: serves the site and 301s
-  retired URLs. Config in `wrangler.jsonc`. (It used to proxy `/api/chat` to OpenAI; the chat
-  widget and that endpoint were both removed 09 Aug 2026.)
+- **Backend:** Cloudflare Worker at `worker/index.js` — serves the site, sends www to the
+  apex, and 301s retired URLs. Config in `wrangler.jsonc`. (It used to proxy `/api/chat` to
+  OpenAI; the chat widget and that endpoint were both removed 09 Aug 2026.)
 - **Chat widget:** now a hosted third-party script, `cdn.hephoratech.com/widget.js`, on all
   16 pages. Not part of this repo's code — configured via `data-site-id` / `data-api`.
 
@@ -43,7 +47,7 @@ cd "D:\Hephoratech\hephoratech-website"
 sed -i 's|xtract.css?v=14|xtract.css?v=15|g; s|xtract.js?v=14|xtract.js?v=15|g' *.html
 ```
 
-Current: `xtract.css/js?v=23`, `magic-rings.js?v=3`.
+Current: `xtract.css/js?v=24`, `magic-rings.js?v=3`.
 
 This cost hours in the last session — several rounds of changes appeared to do nothing
 because the browser held a stale `xtract.js`.
@@ -81,6 +85,13 @@ loader and the hero rings were gated on it and never ran. Both now start on
 `load` → `requestIdleCallback` (Lottie) or synchronously (rings), and use the observer only
 to *pause* work that is already running.
 
+Reconfirmed 18 Aug 2026 while adding Lottie lazy loading. An IntersectionObserver version was
+written first and **never fired once** — the page was `visibilityState: "hidden"`, which
+suspends observer delivery entirely, so all six animations silently fell through to the
+timeout backstop. The shipped version uses `getBoundingClientRect` instead. If you need to
+know whether something is near the viewport in order to *start* work, measure the rect. The
+observer is for stopping work, and nothing else.
+
 ---
 
 ## What is live now
@@ -95,13 +106,43 @@ stock photos deleted; `assets/services/` no longer exists.
 - **Use the FULL build, not `lottie_light`.** The light build ships no filter support, so
   blurred layers render as hard-edged solids — one animation's soft white glow became an
   opaque blob. Cost: 74KB gz vs 45KB.
-- Loads after `load` then on idle, so first paint and LCP are untouched.
+- The **player** loads after `load` then on idle, so first paint and LCP are untouched.
+- The **animation files load lazily**, one at a time (18 Aug 2026 — see below).
 - `data-par` on the container overrides `preserveAspectRatio` per card (card 01 left-aligns).
+- Only `index.html` has any `[data-lottie]`. Service pages never load the player at all.
 
-**Weights (gzipped / raw):** web-app-development 7/80KB · seo 8/155KB · ai-animation-flow
-7/94KB · ecommerce 56/**1105**KB · social-media 109/**718**KB · **saas 179/356KB**. The raw
+**Weights (gzipped / raw):** web-app-development 8/80KB · seo 8/155KB · ai-animation-flow
+7/94KB · ecommerce 57/**1105**KB · social-media 109/**718**KB · **saas 179/356KB**. The raw
 figures matter more than the gzipped ones — that is what gets parsed and turned into SVG
-nodes. Re-exporting the three fat ones as pure vector is the single biggest perf win left.
+nodes. Re-exporting the three fat ones as pure vector is still worth doing.
+
+### Lottie lazy loading (18 Aug 2026)
+
+All six JSONs used to be fetched on every homepage load — 455KB over the wire, about 90% of
+the page's total weight, and all of it before the visitor had scrolled anywhere near the
+services section. They are now fetched as each row approaches the viewport.
+
+Measured at 375×812, cold load, scroll position 0: **2 of 6 mount, 144KB instead of 455KB.**
+The rest arrive on scroll. `saas` (179KB) and `social-media` (109KB) — the two heaviest — are
+no longer part of first load at all.
+
+Two things make it smooth:
+
+- **The trigger is a `getBoundingClientRect` proximity check, not an IntersectionObserver.**
+  Convention 4 holds: there is no observer anywhere in the *trigger* path. The check runs
+  immediately, on scroll, and on a 1s sweep that stops itself once all six are mounted. It
+  is synchronous, has no silent failure mode, and — unlike an observer — keeps working while
+  the tab is hidden, so a page opened in a background tab still defers correctly.
+  (This was found the hard way: an IntersectionObserver version of this was written first and
+  never fired at all in a hidden tab, so every animation fell through to the backstop.)
+- **Mounts are serialised through a queue**, one at a time via `requestIdleCallback` with a
+  1.2s timeout. Handing all six to `loadAnimation` in one synchronous loop meant six XHRs
+  landing together and six SVG trees built in overlapping frames — `ecommerce` alone produces
+  2570 SVG nodes and `social-media` 1743. That overlap was the scroll stutter.
+
+`LEAD` is 1400px, roughly 1.5 screens on a phone. The containers are a fixed 246px in CSS and
+static art holds the space, so a mount never shifts layout. If a JSON stalls or 404s, a 3s
+timeout releases the queue so one bad file cannot leave every later card blank.
 
 **All six pause when off screen** (added 09 Aug 2026). They previously ran `autoplay+loop`
 with nothing stopping them, so five animations rendered continuously off screen — the largest
@@ -176,9 +217,21 @@ link by pattern-matching the href.** It now accepts `^/[a-z0-9-]*$` and, as a fa
 transition on the site silently stops firing — no error, links still work, the animation just
 never runs.
 
-**www does not exist** (NXDOMAIN) and deliberately so. Non-www is canonical everywhere —
-all 16 canonicals, the sitemap, `og:url` and the schema. The string `www.hephoratech` appears
-nowhere in the codebase. Do not "fix" this by switching to www.
+**Non-www is canonical everywhere** — all 16 canonicals, the sitemap, `og:url` and the
+schema. The string `www.hephoratech` appears nowhere in the codebase. Do not "fix" this by
+switching to www.
+
+**But www is now broken, not absent (verified 18 Aug 2026).** This file previously said www
+was NXDOMAIN; that is no longer true. `www.hephoratech.com` resolves to the same proxied
+Cloudflare IPs as the apex (104.21.72.114, 172.67.183.176), `http://www` 301s to `https://www`
+via Always Use HTTPS — and then `https://www` returns **522**, because no Worker route covers
+the www hostname so Cloudflare has no origin to reach. Anyone who types the www form lands on
+a Cloudflare error page.
+
+The fix is a redirect, not a canonical change: either a Cloudflare Redirect Rule
+(`www.hephoratech.com/*` → `https://hephoratech.com/$1`, 301), or add
+`www.hephoratech.com/*` as a Worker route and 301 in `worker/index.js`. A redirect rule is
+simpler and costs no Worker invocation.
 
 ### The brand-name problem — read before doing more SEO work
 
@@ -264,7 +317,8 @@ Ordered by what actually matters.
 | **No reviews** | GBP has zero. Three or four materially strengthen a new profile; prominence is one of Google's three local ranking factors. |
 | **Delete the OpenAI secrets** | Front end and backend both gone, but the Cloudflare secrets remain. `npx wrangler secret delete OPENAI_API_KEY` and, if set, `OPENAI_MODEL`. Harmless but pointless. |
 | **Play Store developer account** | The food delivery app sits on the *client's* Play account, verified with the owner's personal identity — so its developer name is not HephoraTech's to change, and Google links accounts by identity (a ban on one can take the other down). Get the identity moved to the client before creating a HephoraTech org account. That needs a **D-U-N-S number**, free but up to 30 days. |
-| **Re-export the three fat Lottie files** | `ecommerce` 1105KB raw, `social-media` 718KB, `saas` 356KB — they embed PNGs. Pure-vector re-exports would cut ~250KB and reduce render cost. Design work, not code. Biggest perf win left. |
+| **Activate the www redirect** | The Worker code is written and unit-tested, but **www is still 522** because no route reaches it. Fix in the Cloudflare dashboard: Rules → Redirect Rules → `www.hephoratech.com/*` → `https://hephoratech.com/${1}`, 301. Runs at the edge, costs no Worker invocation. Verify with `curl -sI https://www.hephoratech.com/`. |
+| **Re-export the three fat Lottie files** | `ecommerce` 1105KB raw, `social-media` 718KB, `saas` 356KB — they embed PNGs. Now deferred until scrolled to, so no longer a first-load cost, but still the heaviest thing to parse when they do arrive. Pure-vector re-exports would cut ~250KB. Design work, not code. |
 | **Callouts for cards 02 and 06** | Possible but need a per-aspect overlay; the current one assumes square artwork. |
 | **`HephoraTech-Profile.pdf` says "a food business"** | The site now names **Sai Logabala's Chechi Puttu Kadai** on the homepage and `/product-food-delivery`. The PDF could be regenerated to match; the reportlab script is not in the repo. |
 
@@ -309,13 +363,15 @@ D:\Hephoratech\
 │                               No /api/chat — removed with the old widget.
 ├── wrangler.jsonc
 ├── HephoraTech-Profile.pdf     4-page client-facing capability profile
-├── SETUP.md                    ARCHIVED — banner at top says why
-├── AI-WIDGET-SETUP.md          ARCHIVED — the widget it documents is gone
-├── HOW-TO-ADD-VIDEO.md         STALE — targets .srow-vis/.uim markup that
-│                               no longer exists after the Lottie rebuild
+├── outputs/og.html             the source that renders assets/og-image.png —
+│                               keep it, it is how that image is regenerated
 └── hephoratech-react-rebuild-plan.md   scoped, not started; says 6 pages,
                                 there are 16
 ```
+
+Every file under `hephoratech-website/` is now referenced by the site. Nothing in there
+is dead, and nothing that is not a real asset should be put there — the whole directory
+is public.
 
 Deleted and deliberately not coming back: `assets/team/`, `assets/services/`,
 `product-attendance.html`, `logo-light.png`, `index-classic.html`, `style.css`, `app.js`.
