@@ -48,7 +48,7 @@ cd "D:\Hephoratech\hephoratech-website"
 sed -i 's|xtract.css?v=14|xtract.css?v=15|g; s|xtract.js?v=14|xtract.js?v=15|g' *.html
 ```
 
-Current: `xtract.css/js?v=25`, `magic-rings.js?v=3`.
+Current: `xtract.css/js?v=26`, `magic-rings.js?v=3`.
 
 This cost hours in the last session — several rounds of changes appeared to do nothing
 because the browser held a stale `xtract.js`.
@@ -182,6 +182,36 @@ Every page scrolled sideways by 65px at 390px. Cause: the decorative `.orb` elem
 containing block and `body{overflow-x:hidden}` never clipped them. Fixed with
 `.orb{max-width:100%}`. Touch targets raised on phones — menu toggle was 20×22, now 44×44
 (needed `flex-shrink:0`, since `.nav-in` is a flex row).
+
+### Theme toggle collided with the chat widget on mobile (18 Aug 2026)
+
+Reported as "the widget is not sitting properly" on mobile. It was the theme toggle, not the
+widget. On desktop the toggle is top-right (`top:26px; right:28px`); at ≤1180px the nav pill
+reaches the edges and owns that corner, so the toggle was moved to the **bottom-right**
+(`bottom:22px; right:20px`). That is exactly where the hosted chat widget pins its launcher —
+confirmed from the deployed script: `position:fixed; bottom:20px; right:20px;
+z-index:2147483000`. The widget's near-max z-index drew its bubble straight on top of the
+toggle.
+
+Fixed by moving the ≤1180px toggle to the **bottom-left** (`bottom:22px; left:20px;
+right:auto`) — the one corner both the nav (top) and the widget (bottom-right) leave clear.
+Verified: with a mock of the real launcher injected, the two now sit 227px apart, the toggle
+still switches theme and updates `theme-color`, and desktop is unchanged (still top-right).
+The widget itself is third-party and unchanged; only this site's button moved.
+
+### Hero orbs — light-mode blur was silently heavier than intended (18 Aug 2026)
+
+While chasing "rendering happens while scrolling," found the perf pass's
+`.orb{filter:blur(60px)}` was being overridden in **light mode — the default theme** — by
+`html[data-theme="light"] .orb{...filter:blur(96px)}`, which wins on specificity. So every
+default visitor got the heavier 96px blur on two `scale`-animating orbs in the hero, a real
+cost on a mobile GPU. Removed the redundant `filter` from the light rule (kept its opacity)
+so 60px applies in both themes, and corrected the promotion hint from
+`will-change:translate` to `will-change:transform`, since orbA/orbB animate translate **and**
+scale — the wrong hint let the blur re-rasterise each frame instead of compositing a cached
+layer. Verified computed `filter: blur(60px)` and `will-change: transform` in the default
+theme. (The `content-visibility:auto` sections were also examined and left alone — their
+`auto` intrinsic-size self-corrects after first render, and no reflow was reproducible.)
 
 ### Browser chrome follows the theme — theme-color + color-scheme (18 Aug 2026)
 

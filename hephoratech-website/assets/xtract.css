@@ -1160,7 +1160,12 @@ html[data-theme="light"] .bg-grid{
   background-image:linear-gradient(rgba(9,20,45,.045) 1px,transparent 1px),
                    linear-gradient(90deg,rgba(9,20,45,.045) 1px,transparent 1px);
 }
-html[data-theme="light"] .orb{opacity:.30;filter:blur(96px)}
+/* Only the opacity is a light-theme override. The blur is deliberately NOT
+   set here: this selector outweighs the `.orb{filter:blur(60px)}` perf rule on
+   specificity, so declaring a blur here would silently force every default
+   (light) visitor back to the heavier radius. Leaving it off lets the 60px
+   perf value apply in both themes. */
+html[data-theme="light"] .orb{opacity:.30}
 html[data-theme="light"] .band::after{background:radial-gradient(circle,rgba(30,95,255,.16),transparent 66%)}
 html[data-theme="light"] .cta-box::after,html[data-theme="light"] .eg::after{opacity:.5}
 html[data-theme="light"] .orb-1{background:radial-gradient(circle,rgba(30,95,255,.34),transparent 66%)}
@@ -1251,8 +1256,13 @@ html.theming .info-item{
   html.theming *{transition:none !important}
 }
 @media(max-width:1180px){
-  /* nav pill reaches the edges here, so tuck the icon under it */
-  .theme-tg{top:auto;bottom:22px;right:20px}
+  /* The nav pill reaches the edges here, so the icon can't stay top-right —
+     the hamburger owns that corner. It used to move to the BOTTOM-right, but
+     that is exactly where the chat widget pins its launcher
+     (position:fixed; bottom:20px; right:20px; z-index:2147483000), so the
+     bubble was drawn straight on top of this button. Move to the bottom-LEFT,
+     the one corner both the nav and the widget leave clear. */
+  .theme-tg{top:auto;bottom:22px;left:20px;right:auto}
   .theme-tg svg{width:19px;height:19px}
 }
 
@@ -2233,7 +2243,10 @@ html[data-theme="light"] .p2-tags span{background:rgba(15,35,80,.04)}
 /* ═══ PERF PASS ═══ */
 /* Smaller blur radius — gaussian blur cost scales with radius, and at this
    size 60px is visually indistinguishable from 90px. */
-.orb{filter:blur(60px);will-change:translate}
+/* will-change:transform, not translate: orbA/orbB animate translateX AND
+   scale, so the layer must be promoted for the whole transform or the blur
+   re-rasterises each frame on a mobile GPU. */
+.orb{filter:blur(60px);will-change:transform}
 .orb-1{width:520px;height:400px}
 .orb-2{width:430px;height:320px}
 
