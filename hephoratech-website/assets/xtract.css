@@ -2349,3 +2349,128 @@ html[data-theme="light"].no-hero-rings .hero-rings{opacity:.45}
    factory bails at this width. */
 @media(max-width:760px){.hero-rings canvas{display:none}.orb-1,.orb-2{opacity:.3}}
 @media (prefers-reduced-motion:reduce){.hero-rings{display:none}.orb-1,.orb-2{opacity:.5}}
+
+/* ═══ SERVICES BENTO ═══
+   Replaces the zig-zag rows. Three columns, alternating 2-span / 1-span so the
+   grid reads as deliberate rather than a plain card wall. Wide cards put the
+   art beside the copy, narrow cards stack it on top — the art is inline SVG so
+   it themes itself through the variables and costs no extra request.
+   Prefixed .sbn- throughout: .sz-* and .sb-* still style other sections and a
+   shared class name here would fight them over padding. */
+/* align-items:start is what keeps these compact — the default `stretch` made
+   every card as tall as the tallest in its row, then the art panel stretched
+   to match and the illustration floated in a mostly empty box. */
+.sbn-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;align-items:stretch}
+.sbn-card{
+  grid-column:span 1;display:flex;flex-direction:column;gap:0;
+  background:var(--grad-card);border:1px solid var(--line);border-radius:18px;
+  padding:0;text-decoration:none;color:inherit;position:relative;overflow:hidden;
+  transition:transform .55s var(--soft),border-color .45s var(--soft),box-shadow .55s var(--soft);
+}
+.sbn-card::before{content:'';position:absolute;left:0;right:0;top:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--pur-soft) 30%,transparent)}
+.sbn-card:hover{transform:translateY(-5px);border-color:rgba(30,95,255,.36);box-shadow:0 20px 46px rgba(0,0,0,.34)}
+html[data-theme="light"] .sbn-card:hover{box-shadow:0 18px 40px rgba(15,35,80,.12)}
+.sbn-wide{grid-column:span 2;flex-direction:row;align-items:flex-start;gap:14px}
+/* Narrow cards get a panel the exact shape of the artwork. Wide cards instead
+   let the panel fill the card's full height and centre the artwork inside it —
+   pinning it to the top left several hundred px of empty card underneath. */
+.sbn-wide .sbn-art{flex:0 0 46%;align-self:stretch;aspect-ratio:auto;max-height:none;
+  border-radius:17px 0 0 17px}
+.sbn-wide .sbn-body{flex:1;padding:16px 18px 14px 16px}
+
+/* The panel takes the illustrations' own 400x250 ratio, so the art fills it
+   exactly — no crop, no letterbox. On wide cards it sits at the top rather
+   than stretching to the row height, which was leaving ~120px of dead space. */
+/* flush to the card edge: no border, no gap, and only the outer corners are
+   rounded so the image meets the card's own 18px radius cleanly */
+.sbn-art{position:relative;overflow:hidden;border:0;border-radius:17px 17px 0 0;
+  background:var(--bg-2);aspect-ratio:400/250;max-height:200px;flex-shrink:0}
+/* `meet` = contain, same choice the Lottie loader made: the illustrations are
+   landscape and the wide-card panel is portrait, so cropping would show only a
+   middle strip. Letterboxing is invisible because the panel is already --bg-2. */
+.sbn-svg{display:block;width:100%;height:100%;position:absolute;inset:0;padding:10px;
+  transition:transform .8s var(--soft)}
+.sbn-card:hover .sbn-svg{transform:scale(1.04)}
+.sbn-num{position:absolute;top:9px;right:11px;font-size:.66rem;font-weight:700;
+  letter-spacing:.06em;color:var(--muted-2);z-index:1;
+  background:var(--bg);padding:2px 7px;border-radius:100px;opacity:.86}
+
+.sbn-body{padding:14px 15px 13px;display:flex;flex-direction:column;gap:5px;flex:1}
+.sbn-label{font-size:.66rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--pur-3)}
+.sbn-body h3{font-size:.92rem;font-weight:700;letter-spacing:-.015em}
+.sbn-body p{color:var(--muted);font-size:.78rem;line-height:1.45}
+.sbn-tags{display:flex;gap:7px;flex-wrap:wrap;margin-top:2px}
+.sbn-tags span{font-size:.66rem;color:var(--muted);border:1px solid var(--line);
+  border-radius:100px;padding:3px 9px;background:var(--w03)}
+.sbn-go{display:inline-flex;align-items:center;gap:7px;margin-top:auto;padding-top:6px;
+  font-size:.76rem;font-weight:600;color:var(--pur);transition:gap .45s var(--soft)}
+.sbn-go svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2.3;
+  stroke-linecap:round;stroke-linejoin:round}
+.sbn-card:hover .sbn-go{gap:12px}
+
+@media(max-width:960px){
+  .sbn-grid{grid-template-columns:repeat(2,1fr)}
+  /* align-items must go back to stretch here: the desktop rule sets
+     flex-start, which in column direction collapses the art panel to its
+     content width — and its content is absolutely positioned, so ~0px. */
+  .sbn-wide{grid-column:span 2;flex-direction:column;gap:0;align-items:stretch}
+  .sbn-wide .sbn-art{flex:none;aspect-ratio:400/250}
+  .sbn-wide .sbn-body{padding:16px 4px 4px}
+}
+@media(max-width:640px){
+  .sbn-grid{grid-template-columns:1fr}
+  .sbn-card,.sbn-wide{grid-column:span 1}
+}
+
+/* the services section carries more cards than any other, so it gets a
+   tighter vertical rhythm than the global 68px */
+#services{padding:52px 0}
+
+/* Photo variant of the art panel. The "little animation" is a slow Ken Burns
+   drift — it reads as alive without being a video, so the panel stays a 28KB
+   still instead of a 1-3MB loop. Paused for prefers-reduced-motion. */
+.sbn-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  animation:sbnDrift 18s ease-in-out infinite alternate;
+  transition:transform .8s var(--soft)}
+@keyframes sbnDrift{
+  from{transform:scale(1.04) translate3d(-1%,0,0)}
+  to  {transform:scale(1.11) translate3d(1%,-1.5%,0)}
+}
+.sbn-card:hover .sbn-photo{animation-play-state:paused;transform:scale(1.13)}
+@media(prefers-reduced-motion:reduce){ .sbn-photo{animation:none} }
+
+/* Extra detail line for the wide cards — the image got wider but the body also
+   got more room, so it can carry deliverables rather than just a tagline. */
+.sbn-points{display:flex;flex-direction:column;gap:5px;margin:2px 0 1px}
+/* NOT display:flex. A flex span turns every child into a flex item, so the
+   <strong> product name became its own column and the rest of the sentence
+   wrapped beside it in a ragged second column. Block + absolute dot lets the
+   text flow as one normal sentence. */
+.sbn-points span{display:block;position:relative;padding-left:15px;
+  font-size:.76rem;line-height:1.5;color:var(--muted)}
+.sbn-points span::before{content:'';position:absolute;left:0;top:7px;
+  width:5px;height:5px;border-radius:50%;background:var(--pur);
+  box-shadow:0 0 0 3px var(--pur-soft)}
+@media(max-width:960px){
+  .sbn-art{border-radius:17px 17px 0 0}
+  .sbn-wide .sbn-art{border-radius:17px 17px 0 0}
+  .sbn-wide .sbn-body{padding:14px 15px 13px}
+}
+
+/* ── the live Lottie animations, inside the bento panel ──
+   .sb-lottie was authored for the old zig-zag: pinned right at 58% width and
+   sitting at z-index -2. In a bento panel it needs to fill the panel instead.
+   It also starts at opacity 0 and is revealed by the `lottie-live` class the
+   loader adds — the loader's closest() now includes .sbn-card, or nothing
+   would ever become visible. */
+.sbn-art .sb-lottie{position:absolute;inset:0;width:auto;height:auto;
+  right:0;left:0;z-index:0}
+.sbn-card.lottie-live .sb-lottie{opacity:1!important}
+.sbn-art .sb-lottie svg{display:block;width:100%!important;height:100%!important}
+
+/* Only four services on the homepage now; the rest live on /services. */
+.sbn-more{display:flex;justify-content:center;margin-top:26px}
+
+/* product names in the deliverable list read as names, not emphasis */
+.sbn-points strong{color:var(--text);font-weight:600}

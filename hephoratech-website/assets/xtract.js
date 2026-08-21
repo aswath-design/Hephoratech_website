@@ -434,7 +434,6 @@
       s.src = 'assets/lottie/lottie.min.js';
       s.onload = () => {
         if(typeof lottie === 'undefined') return;
-
         const mount = (el, done) => {
           try{
             const anim = lottie.loadAnimation({
@@ -452,7 +451,7 @@
             });
             /* only now hide the still art beneath it — if the player or the
                JSON never arrives, the photo stays and the card looks intact */
-            const card = el.closest('.sz-row, .sb-card');
+            const card = el.closest('.sz-row, .sb-card, .sbn-card');
             if(card) card.classList.add('lottie-live');
 
             /* Six SVG players looping at once is the single heaviest thing on
@@ -845,7 +844,11 @@
       noiseAmount:  0.08,
       rotation:     0,
       ringGap:      1.5,
-      followMouse:  true,
+      // The rings run on their own timing rather than chasing the pointer:
+      // cursor-tracking made the hero feel reactive to mouse position on a
+      // page nobody interacts with up there, and it kept the WebGL loop
+      // writing uniforms on every mousemove.
+      followMouse:  false,
       mouseInfluence: 0.12,
       hoverScale:   1.06,
         parallax:     0.03
