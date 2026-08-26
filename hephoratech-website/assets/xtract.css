@@ -2474,3 +2474,33 @@ html[data-theme="light"] .sbn-card:hover{box-shadow:0 18px 40px rgba(15,35,80,.1
 
 /* product names in the deliverable list read as names, not emphasis */
 .sbn-points strong{color:var(--text);font-weight:600}
+
+/* ═══ ABOUT: Technology stack ═══ */
+.stack-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.stack-col{background:var(--grad-card);border:1px solid var(--line);border-radius:16px;padding:22px 22px 24px}
+.stack-col h4{font-size:.74rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--pur-3);margin-bottom:14px}
+.stack-tags{display:flex;flex-wrap:wrap;gap:8px}
+.stack-tags span{font-size:.82rem;color:var(--text);background:var(--w04);
+  border:1px solid var(--line-2);border-radius:100px;padding:6px 13px;transition:border-color .4s,background .4s}
+.stack-col:hover .stack-tags span{border-color:rgba(30,95,255,.28)}
+@media(max-width:900px){
+  .stack-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:560px){
+  .stack-grid{grid-template-columns:1fr}
+}
+
+/* ═══ tech logo loop (replaces the static stack grid) ═══ */
+.ll-wrap{position:relative;overflow:hidden;width:100%;padding:14px 0;
+  color:var(--muted);
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent)}
+.ll-track{display:flex;width:max-content;will-change:transform}
+.ll-strip{display:flex;align-items:center;flex:0 0 auto}
+.ll-item{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;
+  margin:0 34px;color:var(--muted);transition:color .4s,transform .4s var(--soft)}
+.ll-item svg{height:34px;width:auto;display:block}
+.ll-item:hover{color:var(--text);transform:scale(1.12)}
+.ll-caption{text-align:center;font-size:.8rem;letter-spacing:.02em;color:var(--muted-2);margin-top:14px}
+@media(max-width:560px){ .ll-item{margin:0 24px} .ll-item svg{height:28px} }

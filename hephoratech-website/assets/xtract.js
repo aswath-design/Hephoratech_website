@@ -646,24 +646,10 @@
     paint();
   })();
 
-  /* ---- magnetic buttons ---- */
-  if(!reduce){
-    document.querySelectorAll('.mag').forEach(el=>{
-      let raf = 0, cx = 0, cy = 0, tx = 0, ty = 0, on = false;
-      el.addEventListener('mousemove', e=>{
-        const r = el.getBoundingClientRect();
-        tx = (e.clientX - (r.left + r.width/2))  * .22;
-        ty = (e.clientY - (r.top  + r.height/2)) * .28;
-        on = true; if(!raf) raf = requestAnimationFrame(loop);
-      }, {passive:true});
-      el.addEventListener('mouseleave', ()=>{ tx = 0; ty = 0; on = false; if(!raf) raf = requestAnimationFrame(loop); });
-      function loop(){
-        cx += (tx - cx) * .16; cy += (ty - cy) * .16;
-        el.style.transform = `translate(${cx.toFixed(2)}px,${cy.toFixed(2)}px)`;
-        raf = (on || Math.abs(cx) > .1 || Math.abs(cy) > .1) ? requestAnimationFrame(loop) : 0;
-      }
-    });
-  }
+  /* ---- magnetic buttons: DISABLED ----
+     Buttons stay fixed on hover across the whole site. The `.mag` class
+     remains in the markup (it carries no CSS of its own) but nothing
+     drives it any more, so no button drifts toward the cursor. */
 
   /* ---- cursor spotlight on cards ---- */
   if(!reduce){
