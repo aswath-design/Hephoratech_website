@@ -117,74 +117,89 @@
       canvas.height = vh * dpr;
     };
     resize();
-    addEventListener('resize', resize, { passive: true });
 
     // per-button animation state
     const st = buttons.map(() => ({ angle: 2.4, idle: 2.4, bright: 0, aim: null, prox: 0 }));
 
-    addEventListener('pointermove', e => {
-      for (let i = 0; i < buttons.length; i++) {
-        const r = buttons[i].getBoundingClientRect();
-        const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
-        const dx = Math.max(r.left - e.clientX, 0, e.clientX - r.right);
-        const dy = Math.max(r.top - e.clientY, 0, e.clientY - r.bottom);
-        const dist = Math.hypot(dx, dy);
-        const prox = parseFloat(buttons[i].dataset.specularProximity) || 220;
-        if (dist === 0) {
-          const nx = (e.clientX - cx) / (r.width / 2);
-          const ny = (cy - e.clientY) / (r.height / 2);
-          st[i].aim = Math.atan2(2 / r.height, -2 / r.width) + nx * 0.3 + ny * 0.15;
-        } else {
-          st[i].aim = Math.atan2(cy - e.clientY, e.clientX - cx);
-        }
-        const t = Math.max(0, 1 - dist / Math.max(prox, 1));
-        st[i].prox = t * t * (3 - 2 * t);
-      }
-    }, { passive: true });
+    // Cached geometry. The first version read getBoundingClientRect for every
+    // button on every pointermove AND every frame — a synchronous layout on
+    // each of the ~100 pointer events per second, which is what made the page
+    // feel laggy. Now the rects are measured only on scroll/resize (flagged
+    // dirty, re-read once inside the next frame), the pointer handler stores
+    // coordinates only, and the loop sleeps whenever nothing is animating.
+    let rects = [];
+    function measure() {
+      rects = buttons.map(function (b) {
+        const r = b.getBoundingClientRect();
+        return {
+          l: r.left, t: r.top, w: r.width, h: r.height, r: r.right, b: r.bottom,
+          rad: parseFloat(getComputedStyle(b).borderTopLeftRadius) || 18
+        };
+      });
+    }
+    let dirty = true;
 
+    let px = -1e9, py = -1e9;      // last pointer position, viewport coords
     let raf = 0, last = performance.now();
-    const SPEED = 0.35, RADIUS = 100, THICK = 1;
+    const SPEED = 0.35, THICK = 1;
+
+    function wake() { if (!raf) { last = performance.now(); raf = requestAnimationFrame(frame); } }
+
+    addEventListener('pointermove', function (e) { px = e.clientX; py = e.clientY; wake(); }, { passive: true });
+    addEventListener('scroll', function () { dirty = true; wake(); }, { passive: true });
+    addEventListener('resize', function () { resize(); dirty = true; wake(); }, { passive: true });
 
     function frame(now) {
-      raf = requestAnimationFrame(frame);
       const dt = Math.min((now - last) / 1000, 0.05);
       last = now;
-
-      // is anything lit or still fading? if not, skip the whole draw
-      let anyLit = false;
-      for (let i = 0; i < st.length; i++) if (st[i].prox > 0.001 || st[i].bright > 0.001) anyLit = true;
-      if (!anyLit) return;
+      if (dirty) { measure(); dirty = false; }
 
       const col = themeColors();
+      let active = false;
+
       gl.clearColor(0, 0, 0, 0);
       gl.scissor(0, 0, canvas.width, canvas.height);
       gl.clear(gl.COLOR_BUFFER_BIT);
 
       for (let i = 0; i < buttons.length; i++) {
-        const s = st[i];
+        const s = st[i], g = rects[i];
+        if (!g) continue;
+
+        // proximity from the cached rect + stored pointer — no layout read
+        const dx = Math.max(g.l - px, 0, px - g.r);
+        const dy = Math.max(g.t - py, 0, py - g.b);
+        const dist = Math.hypot(dx, dy);
+        const prox = parseFloat(buttons[i].dataset.specularProximity) || 220;
+        const cx0 = g.l + g.w / 2, cy0 = g.t + g.h / 2;
+        if (dist === 0) {
+          const nx = (px - cx0) / (g.w / 2), ny = (cy0 - py) / (g.h / 2);
+          s.aim = Math.atan2(2 / g.h, -2 / g.w) + nx * 0.3 + ny * 0.15;
+        } else {
+          s.aim = Math.atan2(cy0 - py, px - cx0);
+        }
+        const t = Math.max(0, 1 - dist / Math.max(prox, 1));
+        s.prox = t * t * (3 - 2 * t);
+
         s.idle += SPEED * dt;
         const target = s.aim != null ? s.aim : s.idle;
         const diff = ((target - s.angle + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
         s.angle += diff * (1 - Math.exp(-dt * 7));
         s.bright += (s.prox - s.bright) * (1 - Math.exp(-dt * 8));
         if (s.prox < 0.001 && s.bright < 0.002) continue;
+        active = true;
+        if (g.b < -PAD || g.t > vh + PAD) continue; // off screen
 
-        const r = buttons[i].getBoundingClientRect();
-        if (r.bottom < -PAD || r.top > vh + PAD) continue; // off screen
-        const cx = (r.left + r.width / 2) * dpr;
-        const cy = (vh - (r.top + r.height / 2)) * dpr;
-        const rad = parseFloat(getComputedStyle(buttons[i]).borderTopLeftRadius) || 18;
-
-        // scissor to this button's box so the fragment shader only runs there
-        const sx = Math.floor((r.left - PAD) * dpr);
-        const sy = Math.floor((vh - r.bottom - PAD) * dpr);
-        const sw = Math.ceil((r.width + PAD * 2) * dpr);
-        const shh = Math.ceil((r.height + PAD * 2) * dpr);
-        gl.scissor(sx, sy, sw, shh);
-
+        const cx = (g.l + g.w / 2) * dpr;
+        const cy = (vh - (g.t + g.h / 2)) * dpr;
+        gl.scissor(
+          Math.floor((g.l - PAD) * dpr),
+          Math.floor((vh - g.b - PAD) * dpr),
+          Math.ceil((g.w + PAD * 2) * dpr),
+          Math.ceil((g.h + PAD * 2) * dpr)
+        );
         gl.uniform2f(U.uCenter, cx, cy);
-        gl.uniform2f(U.uHalfSize, (r.width / 2) * dpr, (r.height / 2) * dpr);
-        gl.uniform1f(U.uRadius, Math.min(rad, Math.min(r.width, r.height) / 2) * dpr);
+        gl.uniform2f(U.uHalfSize, (g.w / 2) * dpr, (g.h / 2) * dpr);
+        gl.uniform1f(U.uRadius, Math.min(g.rad, Math.min(g.w, g.h) / 2) * dpr);
         gl.uniform1f(U.uAngle, s.angle);
         gl.uniform1f(U.uPx, dpr);
         gl.uniform3fv(U.uLineColor, col.line);
@@ -196,12 +211,15 @@
         gl.uniform1f(U.uBaseWidth, dpr);
         gl.drawArrays(gl.TRIANGLES, 0, 3);
       }
-    }
-    raf = requestAnimationFrame(frame);
 
-    addEventListener('visibilitychange', () => {
+      // sleep when nothing is animating; the next pointer move or scroll wakes it
+      raf = active ? requestAnimationFrame(frame) : 0;
+    }
+    wake();
+
+    addEventListener('visibilitychange', function () {
       if (document.hidden) { cancelAnimationFrame(raf); raf = 0; }
-      else if (!raf) { last = performance.now(); raf = requestAnimationFrame(frame); }
+      else wake();
     });
   }
 
