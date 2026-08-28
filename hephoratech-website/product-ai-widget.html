@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HephoraTech AI Widget — HephoraTech</title>
+<meta name="description" content="An embeddable AI chat assistant for any website. Answers visitors instantly from your own content, captures leads, and hands off to a real person on their phone. The same widget running on this site.">
+<link rel="icon" href="assets/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#FBFCFE">
+<script>(function(){try{var t=localStorage.getItem('ht-theme');if(!t)t='light';var d=document.documentElement,light=t==='light';if(light)d.setAttribute('data-theme','light');d.style.colorScheme=light?'light':'dark';var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content',light?'#FBFCFE':'#04060D');}catch(e){}})();</script>
+<meta property="og:type" content="website">
+<meta property="og:title" content="HephoraTech AI Widget — HephoraTech">
+<meta property="og:description" content="An embeddable AI chat assistant for any website. Answers visitors instantly from your own content, captures leads, and hands off to a real person on their phone.">
+<meta property="og:url" content="https://hephoratech.com/product-ai-widget">
+<meta property="og:image" content="https://hephoratech.com/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="HephoraTech AI Widget — HephoraTech">
+<meta name="twitter:description" content="An embeddable AI chat assistant for any website. Answers visitors instantly from your own content, captures leads, and hands off to a real person on their phone.">
+<meta name="twitter:image" content="https://hephoratech.com/assets/og-image.png">
+<link rel="stylesheet" href="assets/xtract.css?v=47">
+<link rel="canonical" href="https://hephoratech.com/product-ai-widget">
+</head>
+<body>
+<div class="progress" id="prog"></div>
+<div class="stars" id="stars"></div>
+<div class="bg-grid"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<nav id="nav">
+  <div class="nav-in">
+    <a href="/" class="nav-logo"><img src="assets/logo-transparent.png" alt="HephoraTech" width="452" height="114"></a>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li class="has-drop"><a href="/services">Services</a>
+        <ul class="drop"><li><a href="/service-web-development"><span class="di"><svg viewBox="0 0 24 24"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg></span>Web &amp; App Development</a></li><li><a href="/service-ecommerce"><span class="di"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 002 1.6h9.7a2 2 0 002-1.6L23 6H6"/></svg></span>E-Commerce</a></li><li><a href="/service-seo"><span class="di"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></span>SEO &amp; Optimization</a></li><li><a href="/service-automation-ai"><span class="di"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>Automation &amp; AI</a></li><li><a href="/service-social-media"><span class="di"><svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg></span>Social Media &amp; Ads</a></li><li><a href="/service-saas"><span class="di"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></span>SaaS Product Builds</a></li></ul>
+      </li>
+      <li class="has-drop"><a href="/products" class="active">Products</a>
+        <ul class="drop"><li><a href="/product-food-delivery"><span class="di"><svg viewBox="0 0 24 24"><path d="M3 11h18M5 11V8a7 7 0 0114 0v3"/><path d="M4 15h16a2 2 0 01-2 2H6a2 2 0 01-2-2z"/><path d="M12 4V2"/></svg></span>Custom Food Delivery App</a></li><li><a href="/product-school-manager"><span class="di"><svg viewBox="0 0 24 24"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5"/></svg></span>School Manager</a></li><li><a href="/product-ai-widget"><span class="di"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></span>AI Widget</a></li></ul>
+      </li>
+      <li><a href="/about">About</a></li>
+      <li><a href="/contact">Contact</a></li>
+    </ul>
+    <button class="menu-toggle" aria-label="Menu">☰</button>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="/">Home</a>
+  <a href="/services">Services</a>
+  <a href="/service-web-development" class="sub">Web &amp; App Development</a><a href="/service-ecommerce" class="sub">E-Commerce</a><a href="/service-seo" class="sub">SEO &amp; Optimization</a><a href="/service-automation-ai" class="sub">Automation &amp; AI</a><a href="/service-social-media" class="sub">Social Media &amp; Ads</a><a href="/service-saas" class="sub">SaaS Product Builds</a>
+  <a href="/products">Products</a>
+  <a href="/product-food-delivery" class="sub">Custom Food Delivery App</a><a href="/product-school-manager" class="sub">School Manager</a><a href="/product-ai-widget" class="sub">AI Widget</a>
+  <a href="/about">About</a>
+  <a href="/contact">Contact</a>
+</div>
+<div class="pt-page">
+
+<section class="page-hero">
+  <div class="wrap">
+    <div class="crumb"><a href="/">Home</a><span>/</span><a href="/products">Products</a><span>/</span>HephoraTech AI Widget</div>
+    <div class="hero-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+    <span class="badge">SaaS Product</span>
+    <span class="status-pill live"><span class="sp-dot"></span>Live &mdash; running on this site right now</span>
+    <h1>HephoraTech AI Widget</h1>
+    <p class="lead">An embeddable AI chat assistant for any website. It answers visitors instantly from <em>your</em> own content, captures who they are, and hands the conversation to a real person&rsquo;s phone the moment it matters. It&rsquo;s the same assistant sitting in the bottom-right corner of this page.</p>
+    <div class="hero-cta">
+      <a href="/contact" class="btn btn-primary mag"><span>Add It to My Site</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <a href="#how" class="btn btn-ghost mag"><span>See How It Works</span></a>
+    </div>
+    <div class="hero-meta"><div class="mi"><div class="k">Best for</div><div class="v">Any website · SaaS · Local business</div></div><div class="mi"><div class="k">Install</div><div class="v">One line of code</div></div><div class="mi"><div class="k">Status</div><div class="v">Live in production</div></div></div>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="wrap">
+    <div class="split">
+      <div class="split-copy rv">
+        <span class="label">Why It Exists</span>
+        <h2 class="mask"><span>The problem it solves.</span></h2>
+        <p>Most website visitors have a question the page doesn&rsquo;t quite answer &mdash; and they have it at 11pm, on a weekend, or two minutes before they leave for a competitor. A contact form replies tomorrow. A phone number goes to voicemail. And staffing live chat around the clock is expensive.</p>
+        <p>The AI Widget closes that gap. It reads your own website, documents and FAQs, then answers visitors in your voice, instantly, day or night &mdash; grounded in what your business actually says, not a generic chatbot guessing. When a visitor wants a real person, or the conversation is worth a human, it rings a teammate&rsquo;s phone and a person picks up right where the bot left off.</p>
+        <p><b style="color:var(--text)">The result.</b> Fewer questions go unanswered, more visitors turn into enquiries with a name and number attached, and your team only steps in for the conversations that need them &mdash; instead of watching a chat box all day.</p>
+      </div>
+      <div data-par="0.03" class="panel-dark rv" style="transition-delay:.1s">
+        <h3 style="margin-bottom:8px">Who it's for</h3>
+        <div class="pt"><div class="dot"></div><div><h4>Service businesses</h4><p>Answer pricing, availability and &ldquo;do you do X?&rdquo; questions before the visitor leaves.</p></div></div>
+        <div class="pt"><div class="dot"></div><div><h4>SaaS &amp; product sites</h4><p>Instant support from your docs, with a human handoff for the hard ones.</p></div></div>
+        <div class="pt"><div class="dot"></div><div><h4>Local &amp; e-commerce</h4><p>Capture leads and orders after hours, straight to WhatsApp or your inbox.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ HOW IT WORKS ═══ -->
+<section id="how">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="label">How It Works</span>
+      <h2 class="mask"><span>From your content to a real conversation.</span></h2>
+      <p class="section-intro">Five moving parts, and you only ever touch the first one.</p>
+    </div>
+    <div class="deliv">
+      <div class="dv rv"><div class="di"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></div><h4>1 · Learns your content</h4><p>We crawl your website, docs and FAQs into a private knowledge base. Update your site, and the widget keeps up.</p></div>
+      <div class="dv rv"><div class="di"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div><h4>2 · Answers instantly</h4><p>Every reply is grounded in your own material &mdash; so it&rsquo;s accurate to your business, not a generic guess &mdash; and it comes back in seconds.</p></div>
+      <div class="dv rv"><div class="di"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><h4>3 · Captures the visitor</h4><p>A light name-and-number step means every chat is a lead you can follow up &mdash; not an anonymous session that vanishes.</p></div>
+      <div class="dv rv"><div class="di"><svg viewBox="0 0 24 24"><path d="M4 14v-2a8 8 0 0116 0v2"/><path d="M4 14h2a1 1 0 011 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1zM20 14h-2a1 1 0 00-1 1v3a1 1 0 001 1h1a1 1 0 001-1z"/><path d="M20 19a3 3 0 01-3 3h-4"/></svg></div><h4>4 · Rings a human</h4><p>When a visitor asks for a person, our agent app rings a teammate&rsquo;s phone like a call. They accept and take over the live chat.</p></div>
+      <div class="dv rv"><div class="di"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></div><h4>5 · Fires your automations</h4><p>New leads flow onward through n8n &mdash; email, WhatsApp, your CRM or Slack &mdash; so nothing sits waiting to be noticed.</p></div>
+      <div class="dv rv"><div class="di"><svg viewBox="0 0 24 24"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg></div><h4>One-line install</h4><p>A single script tag drops it onto any site. It renders in an isolated Shadow DOM, so it never clashes with your existing styles.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ THE AGENT APP ═══ -->
+<section class="alt">
+  <div class="wrap">
+    <div class="split">
+      <div class="split-copy rv">
+        <span class="label">The Companion App</span>
+        <h2 class="mask"><span>Answer chats from your phone.</span></h2>
+        <p>The widget is only half of it. Every AI Widget comes with a mobile <b style="color:var(--text)">agent app</b> for your team &mdash; so a real person can jump into any conversation from wherever they are.</p>
+        <p>Sign in with Google, and you see the team&rsquo;s live queue &mdash; all chats, unread, and the ones waiting for a person. Open any conversation to read its full history, take over from the bot, and reply with text, a photo, or a voice note. When a visitor asks for a human, the phone rings full-screen like an incoming call; accept it and you&rsquo;re in.</p>
+        <div class="hero-cta" style="margin-top:6px">
+          <a href="/contact" class="btn btn-primary mag"><span>Request a Demo</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </div>
+      </div>
+      <div data-par="0.03" class="panel-dark rv" style="transition-delay:.1s">
+        <h3 style="margin-bottom:8px">Inside the agent app</h3>
+        <div class="pt"><div class="dot"></div><div><h4>Live inbox</h4><p>All / Unread / Waiting &mdash; the whole team&rsquo;s queue on one screen.</p></div></div>
+        <div class="pt"><div class="dot"></div><div><h4>Rings on request</h4><p>A visitor asks for a person and your phone rings like a call. Accept or dismiss.</p></div></div>
+        <div class="pt"><div class="dot"></div><div><h4>Full takeover</h4><p>Read the history, reply with photo or voice, assign, release, or close.</p></div></div>
+        <div class="pt"><div class="dot"></div><div><h4>Nothing lost</h4><p>Every conversation is saved, so a returning visitor picks up where they left off.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FEATURES ═══ -->
+<section id="features">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="label">Features</span>
+      <h2 class="mask"><span>What you get.</span></h2>
+      <p class="section-intro">The assistant, the app, and the plumbing behind them.</p>
+    </div>
+    <div class="deliv">
+      <div class="dv rv"><div class="di"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M9 15h6M9 11h3"/></svg></div><h4>Answers from your content</h4><p>Grounded in your own pages and docs, so replies match your business &mdash; not a generic model.</p></div>
+      <div class="dv rv"><div class="di"><svg viewBox="0 0 24 24"><path d="M4 17l6-6-6-6M12 19h8"/></svg></div><h4>One-line install</h4><p>A single script tag on any site. Isolated in a Shadow DOM &mdash; no CSS conflicts, no build step.</p></div>
+      <div class="dv rv"><div class="di"><svg viewBox="0 0 24 24"><path d="M4 14v-2a8 8 0 0116 0v2"/><path d="M4 14h2a1 1 0 011 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1zM20 14h-2a1 1 0 00-1 1v3a1 1 0 001 1h1a1 1 0 001-1z"/></svg></div><h4>Human takeover</h4><p>A real teammate can step into any live chat from the mobile agent app.</p></div>
+      <div class="dv rv"><div class="di"><svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg></div><h4>Agent mobile app</h4><p>Inbox, ring-on-request, and reply with text, photo or voice &mdash; from anywhere.</p></div>
+      <div class="dv rv"><div class="di"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><h4>Lead capture</h4><p>Name and number on every conversation, saved per visitor for easy follow-up.</p></div>
+      <div class="dv rv"><div class="di"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></div><h4>WhatsApp &amp; automations</h4><p>Route new leads to WhatsApp, email, your CRM or Slack through n8n workflows.</p></div>
+      <div class="dv rv"><div class="di"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></div><h4>Matches your brand</h4><p>Colours, name and avatar are yours, in light or dark &mdash; it looks built-in, not bolted on.</p></div>
+      <div class="dv rv"><div class="di"><svg viewBox="0 0 24 24"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg></div><h4>Conversation history</h4><p>Chats persist per visitor, so returning customers resume the same thread.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="label">Questions</span>
+      <h2 class="mask"><span>Frequently asked.</span></h2>
+    </div>
+    <div class="faq rv">
+      <details class="q"><summary>How does it know about my business?</summary><div class="a">We crawl your website, documents and FAQs into a private knowledge base for your widget. Its answers come from that material, so they stay accurate to your business. When your content changes, we refresh what it knows.</div></details>
+      <details class="q"><summary>What happens when the AI can&rsquo;t answer?</summary><div class="a">It hands off to a person. A visitor can ask for a human at any time, and your team gets a full-screen ring on the agent app. They accept and take over the live chat &mdash; with the whole conversation already in front of them.</div></details>
+      <details class="q"><summary>How hard is it to install?</summary><div class="a">One line. You add a single script tag to your site and it appears. It renders inside an isolated Shadow DOM, so it won&rsquo;t clash with your existing design or code &mdash; and there&rsquo;s no build step on your end.</div></details>
+      <details class="q"><summary>Does it work on any website?</summary><div class="a">Yes &mdash; WordPress, Shopify, a custom site, a landing page, anything that lets you add a script tag. The same widget you see on this page is the product.</div></details>
+      <details class="q"><summary>Can we connect it to WhatsApp or our CRM?</summary><div class="a">Yes. New leads and conversations can flow through n8n into WhatsApp, email, your CRM or Slack &mdash; so follow-up happens where your team already works.</div></details>
+      <details class="q"><summary>Who owns the conversations and data?</summary><div class="a">You do. Conversations, leads and the knowledge base are yours. We run it for you and can walk you through exactly what is stored and where.</div></details>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="cta-box rv">
+      <span class="pill-label">Get Started</span>
+      <h2>Put an AI assistant on your site</h2>
+      <p>You&rsquo;re already talking to it &mdash; the assistant in the corner of this page is the product. Let&rsquo;s put one on your site, trained on your content.</p>
+      <div class="cta-actions">
+        <a href="/contact" class="btn btn-primary btn-sm mag"><span>Start a Project</span><span class="btn-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
+        <a href="/service-automation-ai" class="btn btn-light mag"><span>Explore Automation &amp; AI</span></a>
+      </div>
+      <div class="cta-meta">
+        <div><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> Free consultation</div>
+        <div><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> No obligation quote</div>
+        <div><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> Reply within 24 hours</div>
+      </div>
+    </div>
+  </div>
+</section>
+<footer>
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-logo">
+        <img src="assets/logo-transparent.png" alt="HephoraTech" width="452" height="114">
+        <p>Engineered for what's next. Web, apps, e-commerce, and SaaS — built in Tiruppur, delivered anywhere.</p>
+        <form class="foot-news" data-news="726b5e5e-6f83-44a1-9043-a613829fbdf6">
+          <input type="email" placeholder="name@email.com" aria-label="Email address" required>
+          <button type="submit" class="btn btn-primary btn-sm">Subscribe</button>
+        </form>
+        <p class="foot-news-note">Occasional updates. No spam, ever.</p>
+      </div>
+      <div class="foot-col"><h5>Services</h5>
+          <a href="/service-web-development">Web &amp; App Development</a><a href="/service-ecommerce">E-Commerce</a><a href="/service-seo">SEO &amp; Optimization</a><a href="/service-automation-ai">Automation &amp; AI</a><a href="/service-social-media">Social Media &amp; Ads</a><a href="/service-saas">SaaS Product Builds</a>
+        </div>
+        <div class="foot-col"><h5>Products</h5>
+          <a href="/product-food-delivery">Custom Food Delivery App</a><a href="/product-school-manager">School Manager</a><a href="/product-ai-widget">AI Widget</a>
+        </div>
+        <div class="foot-col"><h5>Company</h5>
+          <a href="/about">About</a><a href="/services">All Services</a><a href="/contact">Contact</a>
+        </div>
+        <div class="foot-col"><h5>Get in touch</h5>
+          <a href="mailto:info@hephoratech.com">info@hephoratech.com</a>
+          <a href="tel:+919994229860">+91 99942 29860</a>
+          <a href="/contact">Tiruppur, Tamil Nadu, India</a>
+        </div>
+    </div>
+    <div class="foot-bot">
+      <div class="foot-legal"><a href="/terms">Terms &amp; Conditions</a><a href="/privacy">Privacy Policy</a></div>
+      <div>© 2026 HephoraTech. All rights reserved.</div>
+      <div class="socials">
+        <a href="https://www.instagram.com/hephoratech/" aria-label="Instagram" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
+        <a href="https://www.facebook.com/profile.php?id=61592757102192" aria-label="Facebook" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg></a>
+        <a href="https://www.linkedin.com/company/hephoratech/" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-4 0v7h-4v-11h4v1.5A6 6 0 0116 8z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+      </div>
+    </div>
+  </div>
+</footer>
+</div>
+<script src="assets/xtract.js?v=47"></script>
+<script src="https://cdn.hephoratech.com/widget.js" data-site-id="pk_jqf78_iuNp-hFFcJLUBh3KeR" data-api="https://api.hephoratech.com" defer></script>
+<script src="assets/specular.js?v=2" defer></script>
+</body>
+</html>
