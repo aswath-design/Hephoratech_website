@@ -73,7 +73,7 @@
   --panel-4:rgba(6,6,10,.97);
 }
 *{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;overflow-x:clip}
 body{
   background:var(--bg);color:var(--text);font-family:var(--body);
   line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased;
@@ -1256,13 +1256,11 @@ html.theming .info-item{
   html.theming *{transition:none !important}
 }
 @media(max-width:1180px){
-  /* The nav pill reaches the edges here, so the icon can't stay top-right —
-     the hamburger owns that corner. It used to move to the BOTTOM-right, but
-     that is exactly where the chat widget pins its launcher
-     (position:fixed; bottom:20px; right:20px; z-index:2147483000), so the
-     bubble was drawn straight on top of this button. Move to the bottom-LEFT,
-     the one corner both the nav and the widget leave clear. */
-  .theme-tg{top:auto;bottom:22px;left:20px;right:auto}
+  /* Keep the toggle in the top-right, tucked just left of the hamburger, so
+     it reads as part of the nav. Bottom-right is off-limits (the chat widget
+     pins its launcher there), so we sit beside the menu button rather than
+     under it. */
+  .theme-tg{top:22px;bottom:auto;left:auto;right:92px}
   .theme-tg svg{width:19px;height:19px}
 }
 
