@@ -77,7 +77,7 @@
 
 <section style="padding-top:6px;padding-bottom:0">
   <div class="wrap">
-    <img class="rv" src="assets/ill/aiwidget-real.png" width="1800" height="1200" alt="HephoraTech AI Widget — live chat and pre-chat form" loading="lazy" style="display:block;width:100%;max-width:940px;margin:0 auto;border-radius:22px;border:1px solid var(--line);box-shadow:0 44px 100px -55px rgba(0,0,0,.75)">
+    <img class="rv" src="assets/ill/aiwidget-real.webp" width="1800" height="1200" alt="HephoraTech AI Widget — live chat and pre-chat form" loading="lazy" style="display:block;width:100%;max-width:940px;margin:0 auto;border-radius:22px;border:1px solid var(--line);box-shadow:0 44px 100px -55px rgba(0,0,0,.75)">
   </div>
 </section>
 
@@ -241,7 +241,8 @@
 </footer>
 </div>
 <script src="assets/xtract.js?v=47"></script>
-<script src="https://cdn.hephoratech.com/widget.js" data-site-id="pk_jqf78_iuNp-hFFcJLUBh3KeR" data-api="https://api.hephoratech.com" defer></script>
-<script src="assets/specular.js?v=2" defer></script>
+<script>/* Load the chat widget after the page is interactive so its third-party work never blocks first paint or inflates Total Blocking Time. */
+(function(){function go(){var s=document.createElement('script');s.src='https://cdn.hephoratech.com/widget.js';s.async=true;s.setAttribute('data-site-id','pk_jqf78_iuNp-hFFcJLUBh3KeR');s.setAttribute('data-api','https://api.hephoratech.com');document.body.appendChild(s);}var ric=window.requestIdleCallback||function(f){return setTimeout(f,1);};if(document.readyState==='complete')ric(go);else addEventListener('load',function(){ric(go,{timeout:3000});});})();</script>
+<script src="assets/specular.js?v=3" defer></script>
 </body>
 </html>

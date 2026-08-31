@@ -15,6 +15,10 @@
  */
 (function () {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  // Skip on phones/touch: the WebGL context + shader is real main-thread work,
+  // and a cursor-proximity edge-glow barely reads without a pointer anyway.
+  // Desktop keeps the effect exactly as before.
+  if (matchMedia('(max-width: 820px)').matches || matchMedia('(pointer: coarse)').matches) return;
 
   const PAD = 20; // px the glow may bleed past the button edge
 
