@@ -24,6 +24,19 @@
 <meta name="twitter:image" content="https://hephoratech.com/assets/og-image.png">
 <link rel="stylesheet" href="assets/xtract.css?v=48">
 <link rel="canonical" href="https://hephoratech.com/product-school-manager">
+<style>
+/* Split hero — copy left, product image right (scoped to this page) */
+.ph-split{display:grid;grid-template-columns:1.02fr .98fr;gap:56px;align-items:center}
+.ph-split .ph-copy{min-width:0}
+.ph-split .ph-copy .lead{max-width:46ch}
+.ph-media{min-width:0}
+.ph-media img{display:block;width:100%;height:auto;max-width:540px;margin:0 0 0 auto;
+  border-radius:22px;border:1px solid var(--line);box-shadow:0 44px 100px -55px rgba(0,0,0,.75)}
+@media(max-width:960px){
+  .ph-split{grid-template-columns:1fr;gap:36px}
+  .ph-media img{margin:0 auto;max-width:460px}
+}
+</style>
 </head>
 <body>
 <div class="progress" id="prog"></div>
@@ -61,23 +74,24 @@
 
 <section class="page-hero">
   <div class="wrap">
-    <div class="crumb"><a href="/">Home</a><span>/</span><a href="/products">Products</a><span>/</span>HephoraTech School Manager</div>
-    <div class="hero-icon"><svg viewBox="0 0 24 24"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5"/></svg></div>
-    <span class="badge">SaaS Product</span>
-    <span class="status-pill"><span class="sp-dot"></span>In active development &mdash; early access open</span>
-    <h1>HephoraTech School Manager</h1>
-    <p class="lead">A complete school management platform — admissions to alumni, fees to gradebooks, all in one system instead of six. Currently being built with input from the schools who&rsquo;ll use it first.</p>
-    <div class="hero-cta">
-      <a href="/contact" class="btn btn-primary mag"><span>Request a Demo</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-      <a href="#features" class="btn btn-ghost mag"><span>See Features</span></a>
+    <div class="ph-split">
+      <div class="ph-copy">
+        <div class="crumb"><a href="/">Home</a><span>/</span><a href="/products">Products</a><span>/</span>HephoraTech School Manager</div>
+        <div class="hero-icon"><svg viewBox="0 0 24 24"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5"/></svg></div>
+        <span class="badge">SaaS Product</span>
+        <span class="status-pill"><span class="sp-dot"></span>In active development &mdash; early access open</span>
+        <h1>HephoraTech School Manager</h1>
+        <p class="lead">A complete school management platform — admissions to alumni, fees to gradebooks, all in one system instead of six. Currently being built with input from the schools who&rsquo;ll use it first.</p>
+        <div class="hero-cta">
+          <a href="/contact" class="btn btn-primary mag"><span>Request a Demo</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          <a href="#features" class="btn btn-ghost mag"><span>See Features</span></a>
+        </div>
+        <div class="hero-meta"><div class="mi"><div class="k">Best for</div><div class="v">Schools · Colleges · Institutes</div></div><div class="mi"><div class="k">Deployment</div><div class="v">Cloud or on-premise</div></div><div class="mi"><div class="k">Status</div><div class="v">In development</div></div></div>
+      </div>
+      <div class="ph-media rv">
+        <img src="assets/ill/school-real.webp" width="1800" height="1200" alt="HephoraTech School Manager — admin dashboard and SVKN Agent" fetchpriority="high">
+      </div>
     </div>
-    <div class="hero-meta"><div class="mi"><div class="k">Best for</div><div class="v">Schools · Colleges · Institutes</div></div><div class="mi"><div class="k">Deployment</div><div class="v">Cloud or on-premise</div></div><div class="mi"><div class="k">Status</div><div class="v">In development</div></div></div>
-  </div>
-</section>
-
-<section style="padding-top:6px;padding-bottom:0">
-  <div class="wrap">
-    <img class="rv" src="assets/ill/school-real.webp" width="1800" height="1200" alt="HephoraTech School Manager — admin dashboard and SVKN Agent" loading="lazy" style="display:block;width:100%;max-width:940px;margin:0 auto;border-radius:22px;border:1px solid var(--line);box-shadow:0 44px 100px -55px rgba(0,0,0,.75)">
   </div>
 </section>
 
